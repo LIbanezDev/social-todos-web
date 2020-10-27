@@ -1,0 +1,50 @@
+
+mutation register($data: UserRegisterInput!) {
+    register(data: $data) {
+        ok
+        msg
+        errors {
+            msg
+            path
+        }
+        user {
+            id
+            age
+            email
+        }
+    }
+}
+
+
+mutation login($email: String!, $pass: String!) {
+    login(email: $email, password: $pass) {
+        ok
+        msg
+        errors {
+            msg
+            path
+        }
+        token
+        user {
+            id
+            name
+        }
+    }
+}
+
+query me {
+    me {
+        id
+        name
+        age
+        email
+        photos {
+            id
+            filename
+            description
+            isPublished
+            name
+        }
+    }
+}
+

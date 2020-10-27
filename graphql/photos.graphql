@@ -1,0 +1,92 @@
+mutation deletePhoto($id: Float!) {
+    deletePhoto(ID: $id) {
+        ok
+        msg
+        errors {
+            msg
+            path
+        }
+        photo {
+            id
+            name
+            user {
+                id
+                name
+            }
+        }
+    }
+}
+
+
+mutation editPhoto($id: Float!, $data: PhotoEditData!) {
+    editPhoto(ID: $id, data: $data) {
+        ok
+        msg
+        errors {
+            msg
+            path
+        }
+        photo {
+            id
+            name
+            user {
+                id
+                name
+            }
+        }
+    }
+}
+
+
+mutation addPhoto ($data: PhotoData!) {
+    createPhoto(data: $data) {
+        ok
+        msg
+        errors {
+            msg
+            path
+        }
+        photo {
+            id
+            filename
+        }
+    }
+}
+
+
+query getPhoto($id: Float!) {
+    photo(ID: $id) {
+        filename
+        user {
+            id
+            name
+            age
+        }
+    }
+}
+
+
+
+query getPhotosAndPhoto($id: Float!) {
+    photos {
+        id
+        filename
+        description
+        user {
+            id
+        }
+    }
+    photo(ID: $id) {
+        filename
+        description
+        user {
+            id
+        }
+    }
+}
+
+
+mutation UploadFile($file: Upload!){
+    uploadFile(file:$file)
+}
+

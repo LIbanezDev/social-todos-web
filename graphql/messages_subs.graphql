@@ -1,0 +1,35 @@
+subscription subToAll {
+    esperarNuevosMensajes {
+        content
+        receiverId
+        senderId
+    }
+}
+
+mutation sendMessage($msg: String!, $to: Float!) {
+    enviarMensaje(message: $msg, to: $to) {
+        ok
+        msg
+        errors {
+            msg
+            path
+        }
+        message {
+            id
+        }
+    }
+}
+
+query getChatWith($with: Int!) {
+    myChat(with: $with) {
+        id
+        content
+        date
+        receiver {
+            id
+        }
+        sender {
+            id
+        }
+    }
+}

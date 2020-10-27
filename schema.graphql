@@ -1,0 +1,147 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
+
+interface IMutationResponse {
+    errors: [MutationError!]
+    msg: String
+    ok: Boolean!
+}
+
+type LoginResponse implements IMutationResponse {
+    errors: [MutationError!]
+    msg: String
+    ok: Boolean!
+    token: String
+    user: User
+}
+
+"Mensajes enviados entre los usuarios."
+type Message {
+    content: String!
+    date: DateTime!
+    id: ID!
+    receiver: User!
+    sender: User!
+}
+
+type MessagePayload {
+    content: String!
+    receiverId: Float!
+    senderId: Float!
+}
+
+type MessageResponse implements IMutationResponse {
+    errors: [MutationError!]
+    message: Message
+    msg: String
+    ok: Boolean!
+}
+
+type Mutation {
+    createPhoto(data: PhotoData!): PhotoResponse!
+    deletePhoto(ID: Float!): PhotoResponse!
+    editPhoto(ID: Float!, data: PhotoEditData!): PhotoResponse!
+    enviarMensaje(message: String!, to: Float!): MessageResponse!
+    login(email: String!, password: String!): LoginResponse!
+    register(data: UserRegisterInput!): RegisterResponse!
+    uploadFile(file: Upload!): Boolean!
+}
+
+type MutationError {
+    msg: String
+    path: String
+}
+
+type Photo {
+    description: String!
+    filename: String!
+    id: ID!
+    isPublished: Boolean!
+    name: String!
+    user: User
+    views: Float
+}
+
+type PhotoResponse implements IMutationResponse {
+    errors: [MutationError!]
+    msg: String
+    ok: Boolean!
+    photo: Photo
+}
+
+type PhotosResponse implements IMutationResponse {
+    errors: [MutationError!]
+    msg: String
+    ok: Boolean!
+    photos: [Photo!]!
+}
+
+type Query {
+    me: User
+    myChat(with: Int!): [Message!]!
+    photo(ID: Float!): Photo
+    photos: [Photo!]!
+    users: [User!]!
+}
+
+type RegisterResponse implements IMutationResponse {
+    errors: [MutationError!]
+    msg: String
+    ok: Boolean!
+    user: User
+}
+
+type Subscription {
+    esperarNuevosMensajes: MessagePayload!
+}
+
+"Registered users"
+type User {
+    age: Float!
+    email: String!
+    id: ID!
+    name: String!
+    photos: [Photo!]!
+    receivedMessages: [Message!]!
+    sentMessages: [Message!]!
+}
+
+"Informacion necesaria para agregar fotos!"
+input PhotoData {
+    actorID: Float!
+    description: String!
+    filename: String!
+    isPublished: Boolean!
+    name: String!
+    views: Float!
+}
+
+"Informacion opcional para editar fotos!"
+input PhotoEditData {
+    actorID: Float
+    description: String
+    filename: String
+    isPublished: Boolean
+    name: String
+}
+
+"Informacion necesaria para crear nuevos usuarios"
+input UserRegisterInput {
+    age: Float!
+    email: String!
+    image: String
+    name: String!
+    password: String!
+}
+
+
+"The javascript `Date` as string. Type represents date and time as the ISO Date string."
+scalar DateTime
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload
