@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useRouter} from "next/router";
 import {useGetChatWithQuery} from "../../../../generated/apolloComponents";
 import Layout from "../../../../components/Layout";
@@ -7,17 +7,21 @@ import SendMessage from "../../../../components/SendMessage";
 
 const Index = () => {
     const {query} = useRouter()
+    const [messages, setMessages] = useState([])
     const userLoading = useFetchUser({required: true})
-    const {data, refetch} = useGetChatWithQuery({
+    const {data} = useGetChatWithQuery({
         variables: {
             with: parseInt(query.id as string)
+        },
+        onCompleted: function (data) {
+          setMessages(data.myChat)
         }
     })
     return (
-        <Layout {...userLoading} refetch={refetch}>
+        <Layout {...userLoading}>
             <h2> This is your chat with user {query.id} </h2>
-            <SendMessage refetch={refetch} to={parseInt(query.id as string)}/>
-            <pre> {JSON.stringify(data, null, 4)}</pre>
+            <SendMessage setMessages={setMessages} to={parseInt(query.id as string)}/>
+            <pre> {JSON.stringify(messages, null, 4)}</pre>
         </Layout>
     );
 };

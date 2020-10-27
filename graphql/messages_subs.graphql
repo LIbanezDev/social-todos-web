@@ -16,6 +16,8 @@ mutation sendMessage($msg: String!, $to: Float!) {
         }
         message {
             id
+            content
+            date
         }
     }
 }

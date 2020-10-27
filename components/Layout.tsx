@@ -9,22 +9,19 @@ type Props = {
     user?: User,
     loading?: boolean,
     title?: string,
-    refetch?: any
 }
 
 const Layout: React.FC<Props> = (
-    {children, title = 'This is the default title', refetch}) => {
+    {children, title = 'This is the default title'}) => {
     const {data, loading} = useSubToAllSubscription()
     const {enqueueSnackbar} = useSnackbar()
 
     useEffect(() => {
         if (!loading) {
             const {esperarNuevosMensajes:{content}} = data
-            refetch().then(() => {
-                    enqueueSnackbar(`Tienes un nuevo mensaje: ${content}!`, {
-                        variant: 'success'
-                    })
-                })
+            enqueueSnackbar(`Tienes un nuevo mensaje: ${content}!`, {
+                variant: 'success'
+            })
         }
     }, [data])
 

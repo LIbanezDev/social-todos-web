@@ -1,7 +1,7 @@
 import React, {ChangeEvent, useState} from 'react';
-import {useSendMessageMutation} from "../generated/apolloComponents";
+import {Message, useSendMessageMutation} from "../generated/apolloComponents";
 
-export const SendMessage = ({refetch, to} : {refetch: any, to: number}) => {
+export const SendMessage = ({setMessages, to} : {setMessages: any, to: number}) => {
 
     const [inputValues, setInputValues] = useState({
         msg: '',
@@ -22,7 +22,9 @@ export const SendMessage = ({refetch, to} : {refetch: any, to: number}) => {
             console.log(res)
         } else {
             console.log(res.msg)
-            await refetch()
+            setMessages(prev => {
+                return [...prev, res.message]
+            })
         }
     }
 
