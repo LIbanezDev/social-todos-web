@@ -1,18 +1,14 @@
 import React from "react";
-import {Upload} from "../components/FileUpload";
+import {Upload} from "../components/auth/FileUpload";
 import {useFetchUser} from "../hooks/useFetchUser";
-import Layout from "../components/Layout";
+import Layout from "../components/layout/Layout";
 
 export default function Home() {
     const userLoading = useFetchUser({required: false})
 
-    if (userLoading.loading) {
-        return <h2> Loading... </h2>
-    }
-
     return (
         <Layout title="Index" {...userLoading}>
-            <Upload/>
+            <Upload onChange={() => {}}/>
         </Layout>
     )
 }
