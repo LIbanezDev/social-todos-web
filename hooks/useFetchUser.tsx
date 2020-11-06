@@ -1,31 +1,32 @@
 import {useEffect, useState} from 'react'
 import {ApolloClient, ApolloQueryResult, useApolloClient} from "@apollo/client";
-import {MeDocument, MeQuery, User} from "../generated/apolloComponents";
+import {MeDocument, MeQuery} from "../__generated__/GraphQLTypes";
+import {useRouter} from "next/router";
 
 declare global {
     interface Window {
-        __user: any;
+        __user: MeQuery;
     }
 }
 
-export async function fetchUser(client: ApolloClient<object>): Promise<Partial<User> | null> {
+export async function fetchUser(client: ApolloClient<object>): Promise<MeQuery> {
 
     if (typeof window !== 'undefined' && window.__user) {
         return window.__user
     }
 
-    const {data: {me}}: ApolloQueryResult<MeQuery> = await client.query({query: MeDocument})
+    const {data}: ApolloQueryResult<MeQuery> = await client.query({query: MeDocument})
 
-    if (!me) {
+    if (!data.me) {
         delete window.__user
         return null
     }
 
     if (typeof window !== 'undefined') {
-        window.__user = me
+        window.__user = data
     }
 
-    return me
+    return data
 }
 
 interface FetchUserProps {
@@ -34,13 +35,13 @@ interface FetchUserProps {
 
 export function useFetchUser({required}: FetchUserProps) {
 
-    const [loading, setLoading] = useState(
+    const [loading, setLoading] = useState<boolean>(
         () => !(typeof window !== 'undefined' && window.__user)
     )
-
+    const {replace} = useRouter()
     const apolloClient = useApolloClient()
 
-    const [user, setUser] = useState(() => {
+    const [user, setUser] = useState<MeQuery | null>(() => {
         if (typeof window === 'undefined') {
             return null
         }
@@ -60,7 +61,7 @@ export function useFetchUser({required}: FetchUserProps) {
                     if (isMounted) {
                         // When the user is not logged in but login is required
                         if (required && !user) {
-                            window.location.href = '/auth'
+                            replace('/auth')
                             return
                         }
                         setUser(user)
@@ -72,7 +73,7 @@ export function useFetchUser({required}: FetchUserProps) {
                 isMounted = false
             }
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
         []
     )
 
