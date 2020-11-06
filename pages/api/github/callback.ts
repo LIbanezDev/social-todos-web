@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import {NextApiRequest, NextApiResponse} from 'next'
 
 interface GithubBody {
     client_id: string,
@@ -16,8 +16,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const response = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
         body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
     })
     const json = await response.json()
-    res.redirect('http://localhost:3000/auth?code='+json.access_token)
+    const url = process.env.NODE_ENV === "production" ? 'https://social-todos-web.vercel.app' : "http://localhost:3000"
+    res.redirect(url + '/auth?code=' + json.access_token)
 }
