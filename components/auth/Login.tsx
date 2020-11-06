@@ -96,7 +96,7 @@ const Login = () => {
                         </Box>
                         <Box marginBottom={2}>
                             <GithubButton clientId="4d39a3c2879f21dc07d5"
-                                          redirectUri="http://localhost:3000/api/github/callback"
+                                          redirectUri="https://social-todos-web.vercel.app/api/github/callback"
                                           onSuccess={onSuccess}
                                           onFailure={onFailure}
                                           buttonText="Ingresar con GitHub"
