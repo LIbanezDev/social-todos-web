@@ -9,7 +9,7 @@ export const getConcatenatedSubscriptionsLink = (authHttpLink: ApolloLink): Apol
         if (localStorage.getItem('token')){
             const wsLink = new WebSocketLink({
                 uri: process.env.NODE_ENV === 'production' ?
-                    'wss://space-x-lv.herokuapp.com/graphql' :
+                    'wss://social-todos-graph.herokuapp.com/graphql' :
                     'ws://localhost:4000/graphql',
                 options: {
                     reconnect: true,

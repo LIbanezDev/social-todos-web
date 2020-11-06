@@ -1,17 +1,16 @@
 import {useMemo} from 'react'
-import {ApolloClient, InMemoryCache} from '@apollo/client'
+import {ApolloClient, ApolloLink, InMemoryCache, NormalizedCacheObject} from '@apollo/client'
 import {createUploadLink} from "apollo-upload-client";
 import {getConcatenatedSubscriptionsLink} from "./subscriptionsLink";
 import {setContext} from "@apollo/client/link/context";
 
-const httpUploadLink = createUploadLink({
+const httpUploadLink: ApolloLink = createUploadLink({
     uri: process.env.NODE_ENV === 'production' ?
-        'https://social-to-dos.vercel.app/api/graphql' :
-        'http://localhost:4000/graphql',
-    credentials: 'same-origin',
+        'https://social-todos-graph.herokuapp.com/graphql' :
+        'http://localhost:4000/graphql'
 });
 
-const authLink = setContext((_, {headers}) => {
+const authLink = process.browser ? setContext( (_, {headers}) => {
     // get the authentication token from local storage if it exists
     const token = localStorage.getItem('token');
     // return the headers to the context so httpLink can read them
@@ -21,8 +20,9 @@ const authLink = setContext((_, {headers}) => {
             authorization: token ? token : "",
         }
     }
-});
-const authHttpUploadLink = authLink.concat(httpUploadLink)
+}) : null;
+
+const authHttpUploadLink = process.browser ? authLink.concat(httpUploadLink) : httpUploadLink
 
 const link = getConcatenatedSubscriptionsLink(authHttpUploadLink)
 
@@ -36,7 +36,7 @@ export function createApolloClient() {
 
 let apolloClient;
 
-export function initializeApollo(initialState = null) {
+export function initializeApollo(initialState = null): ApolloClient<NormalizedCacheObject> {
     const _apolloClient = apolloClient ?? createApolloClient()
 
     // If your page has Next.js data fetching methods that use Apollo Client, the initial state
