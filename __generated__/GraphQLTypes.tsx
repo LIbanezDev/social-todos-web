@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import {gql} from '@apollo/client';
+import * as Apollo from '@apollo/client';
 import * as React from 'react';
 import * as ApolloReactComponents from '@apollo/client/react/components';
 
@@ -42,7 +42,11 @@ export type User = {
     id: Scalars['ID'];
     name: Scalars['String'];
     age: Scalars['Float'];
+    description: Scalars['String'];
+    google: Scalars['Boolean'];
+    github: Scalars['Boolean'];
     email: Scalars['String'];
+    image?: Maybe<Scalars['String']>;
     photos: Array<Photo>;
     sentMessages: Array<Message>;
     receivedMessages: Array<Message>;
@@ -58,13 +62,6 @@ export type Message = {
     receiver: User;
 };
 
-
-export type MessagePayload = {
-    __typename?: 'MessagePayload';
-    content: Scalars['String'];
-    receiverId: Scalars['Float'];
-    senderId: Scalars['Float'];
-};
 
 export type MessageResponse = IMutationResponse & {
     __typename?: 'MessageResponse';
@@ -135,11 +132,25 @@ export type PhotoEditData = {
 /** Informacion necesaria para crear nuevos usuarios */
 export type UserRegisterInput = {
     name: Scalars['String'];
-    age: Scalars['Float'];
     email: Scalars['String'];
-    password: Scalars['String'];
-    image?: Maybe<Scalars['String']>;
+    password?: Maybe<Scalars['String']>;
+    bornDate: Scalars['DateTime'];
+    image?: Maybe<Scalars['Upload']>;
+    imageURL?: Maybe<Scalars['String']>;
 };
+
+
+/** Datos necesarios para ingresar mediante una aplicacion externa como GitHub o Google */
+export type SocialRegisterInput = {
+    token: Scalars['String'];
+    type: External_Auth_Apps;
+};
+
+/** External auth apps like GitHub or Google */
+export enum External_Auth_Apps {
+    Google = 'Google',
+    GitHub = 'GitHub'
+}
 
 export type Query = {
     __typename?: 'Query';
@@ -168,7 +179,7 @@ export type Mutation = {
     editPhoto: PhotoResponse;
     register: RegisterResponse;
     login: LoginResponse;
-    uploadFile: Scalars['Boolean'];
+    loginWithToken: LoginResponse;
 };
 
 
@@ -205,14 +216,13 @@ export type MutationLoginArgs = {
 };
 
 
-export type MutationUploadFileArgs = {
-    file: Scalars['Upload'];
+export type MutationLoginWithTokenArgs = {
+    data: SocialRegisterInput;
 };
-
 
 export type Subscription = {
     __typename?: 'Subscription';
-    esperarNuevosMensajes: MessagePayload;
+    esperarNuevosMensajes: Message;
 };
 
 export type RegisterMutationVariables = Exact<{
@@ -272,7 +282,7 @@ export type MeQuery = (
     & {
     me?: Maybe<(
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'age' | 'email'>
+        & Pick<User, 'id' | 'name' | 'email' | 'age' | 'description' | 'github' | 'image' | 'google'>
         & {
         photos: Array<(
             { __typename?: 'Photo' }
@@ -283,6 +293,49 @@ export type MeQuery = (
 }
     );
 
+export type SocialLoginMutationVariables = Exact<{
+    token: Scalars['String'];
+    type: External_Auth_Apps;
+}>;
+
+
+export type SocialLoginMutation = (
+    { __typename?: 'Mutation' }
+    & {
+    loginWithToken: (
+        { __typename?: 'LoginResponse' }
+        & Pick<LoginResponse, 'ok' | 'msg' | 'token'>
+        )
+}
+    );
+
+export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUsersQuery = (
+    { __typename?: 'Query' }
+    & {
+    users: Array<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'image'>
+        )>
+}
+    );
+
+export type MessagePayloadFragment = (
+    { __typename?: 'Message' }
+    & Pick<Message, 'content' | 'date'>
+    & {
+    receiver: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'age' | 'image'>
+        ), sender: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'age' | 'image'>
+        )
+}
+    );
+
 export type SubToAllSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -290,8 +343,8 @@ export type SubToAllSubscription = (
     { __typename?: 'Subscription' }
     & {
     esperarNuevosMensajes: (
-        { __typename?: 'MessagePayload' }
-        & Pick<MessagePayload, 'content' | 'receiverId' | 'senderId'>
+        { __typename?: 'Message' }
+        & MessagePayloadFragment
         )
 }
     );
@@ -314,7 +367,7 @@ export type SendMessageMutation = (
             & Pick<MutationError, 'msg' | 'path'>
             )>>, message?: Maybe<(
             { __typename?: 'Message' }
-            & Pick<Message, 'id'>
+            & MessagePayloadFragment
             )>
     }
         )
@@ -331,16 +384,7 @@ export type GetChatWithQuery = (
     & {
     myChat: Array<(
         { __typename?: 'Message' }
-        & Pick<Message, 'id' | 'content' | 'date'>
-        & {
-        receiver: (
-            { __typename?: 'User' }
-            & Pick<User, 'id'>
-            ), sender: (
-            { __typename?: 'User' }
-            & Pick<User, 'id'>
-            )
-    }
+        & MessagePayloadFragment
         )>
 }
     );
@@ -481,17 +525,24 @@ export type GetPhotosAndPhotoQuery = (
 }
     );
 
-export type UploadFileMutationVariables = Exact<{
-    file: Scalars['Upload'];
-}>;
-
-
-export type UploadFileMutation = (
-    { __typename?: 'Mutation' }
-    & Pick<Mutation, 'uploadFile'>
-    );
-
-
+export const MessagePayloadFragmentDoc = gql`
+    fragment MessagePayload on Message {
+        content
+        date
+        receiver {
+            id
+            name
+            age
+            image
+        }
+        sender {
+            id
+            name
+            age
+            image
+        }
+    }
+`;
 export const RegisterDocument = gql`
     mutation register($data: UserRegisterInput!) {
         register(data: $data) {
@@ -596,8 +647,12 @@ export const MeDocument = gql`
         me {
             id
             name
-            age
             email
+            age
+            description
+            github
+            image
+            google
             photos {
                 id
                 filename
@@ -641,15 +696,97 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
-export const SubToAllDocument = gql`
-    subscription subToAll {
-        esperarNuevosMensajes {
-            content
-            receiverId
-            senderId
+export const SocialLoginDocument = gql`
+    mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
+        loginWithToken(data: {token: $token, type: $type}) {
+            ok
+            msg
+            token
         }
     }
 `;
+export type SocialLoginMutationFn = Apollo.MutationFunction<SocialLoginMutation, SocialLoginMutationVariables>;
+export type SocialLoginComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<SocialLoginMutation, SocialLoginMutationVariables>, 'mutation'>;
+
+export const SocialLoginComponent = (props: SocialLoginComponentProps) => (
+    <ApolloReactComponents.Mutation<SocialLoginMutation, SocialLoginMutationVariables> mutation={SocialLoginDocument} {...props} />
+);
+
+
+/**
+ * __useSocialLoginMutation__
+ *
+ * To run a mutation, you first call `useSocialLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSocialLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [socialLoginMutation, { data, loading, error }] = useSocialLoginMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useSocialLoginMutation(baseOptions?: Apollo.MutationHookOptions<SocialLoginMutation, SocialLoginMutationVariables>) {
+    return Apollo.useMutation<SocialLoginMutation, SocialLoginMutationVariables>(SocialLoginDocument, baseOptions);
+}
+
+export type SocialLoginMutationHookResult = ReturnType<typeof useSocialLoginMutation>;
+export type SocialLoginMutationResult = Apollo.MutationResult<SocialLoginMutation>;
+export type SocialLoginMutationOptions = Apollo.BaseMutationOptions<SocialLoginMutation, SocialLoginMutationVariables>;
+export const GetUsersDocument = gql`
+    query getUsers {
+        users {
+            id
+            name
+            image
+        }
+    }
+`;
+export type GetUsersComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetUsersQuery, GetUsersQueryVariables>, 'query'>;
+
+export const GetUsersComponent = (props: GetUsersComponentProps) => (
+    <ApolloReactComponents.Query<GetUsersQuery, GetUsersQueryVariables> query={GetUsersDocument} {...props} />
+);
+
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+    return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, baseOptions);
+}
+
+export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+    return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, baseOptions);
+}
+
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
+export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export const SubToAllDocument = gql`
+    subscription subToAll {
+        esperarNuevosMensajes {
+            ...MessagePayload
+        }
+    }
+${MessagePayloadFragmentDoc}`;
 export type SubToAllComponentProps = Omit<ApolloReactComponents.SubscriptionComponentOptions<SubToAllSubscription, SubToAllSubscriptionVariables>, 'subscription'>;
 
 export const SubToAllComponent = (props: SubToAllComponentProps) => (
@@ -688,11 +825,11 @@ export const SendMessageDocument = gql`
                 path
             }
             message {
-                id
+                ...MessagePayload
             }
         }
     }
-`;
+${MessagePayloadFragmentDoc}`;
 export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
 export type SendMessageComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<SendMessageMutation, SendMessageMutationVariables>, 'mutation'>;
 
@@ -729,18 +866,10 @@ export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageM
 export const GetChatWithDocument = gql`
     query getChatWith($with: Int!) {
         myChat(with: $with) {
-            id
-            content
-            date
-            receiver {
-                id
-            }
-            sender {
-                id
-            }
+            ...MessagePayload
         }
     }
-`;
+${MessagePayloadFragmentDoc}`;
 export type GetChatWithComponentProps =
     Omit<ApolloReactComponents.QueryComponentOptions<GetChatWithQuery, GetChatWithQueryVariables>, 'query'>
     & ({ variables: GetChatWithQueryVariables; skip?: boolean; } | { skip: boolean; });
@@ -1033,40 +1162,3 @@ export function useGetPhotosAndPhotoLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetPhotosAndPhotoQueryHookResult = ReturnType<typeof useGetPhotosAndPhotoQuery>;
 export type GetPhotosAndPhotoLazyQueryHookResult = ReturnType<typeof useGetPhotosAndPhotoLazyQuery>;
 export type GetPhotosAndPhotoQueryResult = Apollo.QueryResult<GetPhotosAndPhotoQuery, GetPhotosAndPhotoQueryVariables>;
-export const UploadFileDocument = gql`
-    mutation UploadFile($file: Upload!) {
-        uploadFile(file: $file)
-    }
-`;
-export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
-export type UploadFileComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<UploadFileMutation, UploadFileMutationVariables>, 'mutation'>;
-
-export const UploadFileComponent = (props: UploadFileComponentProps) => (
-    <ApolloReactComponents.Mutation<UploadFileMutation, UploadFileMutationVariables> mutation={UploadFileDocument} {...props} />
-);
-
-
-/**
- * __useUploadFileMutation__
- *
- * To run a mutation, you first call `useUploadFileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadFileMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [uploadFileMutation, { data, loading, error }] = useUploadFileMutation({
- *   variables: {
- *      file: // value for 'file'
- *   },
- * });
- */
-export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>) {
-    return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(UploadFileDocument, baseOptions);
-}
-
-export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
-export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
-export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;

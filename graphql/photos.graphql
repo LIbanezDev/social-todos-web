@@ -85,8 +85,3 @@ query getPhotosAndPhoto($id: Float!) {
     }
 }
 
-
-mutation UploadFile($file: Upload!){
-    uploadFile(file:$file)
-}
-

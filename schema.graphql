@@ -29,12 +29,6 @@ type Message {
     sender: User!
 }
 
-type MessagePayload {
-    content: String!
-    receiverId: Float!
-    senderId: Float!
-}
-
 type MessageResponse implements IMutationResponse {
     errors: [MutationError!]
     message: Message
@@ -48,8 +42,8 @@ type Mutation {
     editPhoto(ID: Float!, data: PhotoEditData!): PhotoResponse!
     enviarMensaje(message: String!, to: Float!): MessageResponse!
     login(email: String!, password: String!): LoginResponse!
+    loginWithToken(data: SocialRegisterInput!): LoginResponse!
     register(data: UserRegisterInput!): RegisterResponse!
-    uploadFile(file: Upload!): Boolean!
 }
 
 type MutationError {
@@ -97,18 +91,28 @@ type RegisterResponse implements IMutationResponse {
 }
 
 type Subscription {
-    esperarNuevosMensajes: MessagePayload!
+    esperarNuevosMensajes: Message!
 }
 
 "Registered users"
 type User {
     age: Float!
+    description: String!
     email: String!
+    github: Boolean!
+    google: Boolean!
     id: ID!
+    image: String
     name: String!
     photos: [Photo!]!
     receivedMessages: [Message!]!
     sentMessages: [Message!]!
+}
+
+"External auth apps like GitHub or Google"
+enum EXTERNAL_AUTH_APPS {
+    GitHub
+    Google
 }
 
 "Informacion necesaria para agregar fotos!"
@@ -130,13 +134,20 @@ input PhotoEditData {
     name: String
 }
 
+"Datos necesarios para ingresar mediante una aplicacion externa como GitHub o Google"
+input SocialRegisterInput {
+    token: String!
+    type: EXTERNAL_AUTH_APPS!
+}
+
 "Informacion necesaria para crear nuevos usuarios"
 input UserRegisterInput {
-    age: Float!
+    bornDate: DateTime!
     email: String!
-    image: String
+    image: Upload
+    imageURL: String
     name: String!
-    password: String!
+    password: String
 }
 
 

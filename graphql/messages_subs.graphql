@@ -1,8 +1,22 @@
+fragment MessagePayload on Message {
+    content
+    date
+    receiver {
+        id
+        name
+        age
+        image
+    }
+    sender {
+        id
+        name
+        age
+        image
+    }
+}
 subscription subToAll {
     esperarNuevosMensajes {
-        content
-        receiverId
-        senderId
+        ...MessagePayload
     }
 }
 
@@ -15,23 +29,13 @@ mutation sendMessage($msg: String!, $to: Float!) {
             path
         }
         message {
-            id
-            content
-            date
+            ...MessagePayload
         }
     }
 }
 
 query getChatWith($with: Int!) {
     myChat(with: $with) {
-        id
-        content
-        date
-        receiver {
-            id
-        }
-        sender {
-            id
-        }
+        ...MessagePayload
     }
 }

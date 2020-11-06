@@ -36,8 +36,12 @@ query me {
     me {
         id
         name
-        age
         email
+        age
+        description
+        github
+        image
+        google
         photos {
             id
             filename
@@ -45,6 +49,22 @@ query me {
             isPublished
             name
         }
+    }
+}
+
+mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
+    loginWithToken(data: {token: $token, type: $type}) {
+        ok
+        msg
+        token
+    }
+}
+
+query getUsers {
+    users {
+        id
+        name
+        image
     }
 }
 
