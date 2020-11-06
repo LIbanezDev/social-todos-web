@@ -1,44 +1,30 @@
-import React, {ChangeEvent, useState} from "react";
-import {useLoginMutation} from "../generated/apolloComponents";
+import React from "react";
+import Layout from "../components/layout/Layout";
+import {useFetchUser} from "../hooks/useFetchUser";
+import {useRouter} from "next/router";
+import {Grid} from "@material-ui/core";
+import Register from "../components/auth/Register";
+import Login from "../components/auth/Login";
 
 const Auth = () => {
-    const [login] = useLoginMutation()
-    const [inputValues, setInputValues] = useState({
-        email: 'lucas.vergara@usm.cl',
-        pass: 'nokia303..',
-    })
+    const {replace} = useRouter()
+    const userLoading = useFetchUser({required: false})
 
-    const handleLogin = async (event) => {
-        event.preventDefault()
-        const {data} = await login({
-            variables: inputValues
-        })
-        if (!data.login.ok) {
-            console.log(data.login.msg)
-        } else {
-            localStorage.setItem('token', data.login.token)
-            console.log(data.login.msg)
-        }
-    }
+    if (userLoading.loading) return <pre> Loading... </pre>
 
-    const handleInputChange = (evt: ChangeEvent<HTMLInputElement>) => {
-        setInputValues({
-            ...inputValues,
-            [evt.target.name]: evt.target.value
-        })
+    if (userLoading.user) {
+        replace('/')
     }
 
     return (
-        <div>
-            <h2> Auth page </h2>
-            <form>
-                <input name="email" onChange={handleInputChange} value={inputValues.email} type="text"/>
-                <input name="pass" onChange={handleInputChange} value={inputValues.pass} type="password"/>
-                <button onClick={handleLogin} type="submit">
-                    Set JWT
-                </button>
-            </form>
-        </div>
+        <Layout title="Auth" {...userLoading}>
+            <Grid item xs={12} sm={6}>
+                <Login/>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <Register/>
+            </Grid>
+        </Layout>
     );
 };
 
