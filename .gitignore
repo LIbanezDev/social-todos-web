@@ -4,8 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
-/.idea/
-
+/.idea
+social_todos_web.iml
 
 
 # testing
