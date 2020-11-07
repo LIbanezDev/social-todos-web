@@ -80,7 +80,6 @@ const Register = () => {
                                             inputVariant="outlined"
                                             variant="inline"
                                             format="dd/MM/yyyy"
-                                            clearable
                                             value={props.values.bornDate}
                                             onChange={value => props.setFieldValue("bornDate", value)}
                                             KeyboardButtonProps={{

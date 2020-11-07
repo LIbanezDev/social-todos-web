@@ -2,15 +2,14 @@ import React from "react";
 import Layout from "../components/layout/Layout";
 import {useFetchUser} from "../hooks/useFetchUser";
 import {useRouter} from "next/router";
-import {Grid} from "@material-ui/core";
+import {CircularProgress, Grid} from "@material-ui/core";
 import Register from "../components/auth/Register";
 import Login from "../components/auth/Login";
 
 const Auth = () => {
     const {replace} = useRouter()
     const userLoading = useFetchUser({required: false})
-
-    if (userLoading.loading) return <pre> Loading... </pre>
+    if (userLoading.loading) return <Layout title="Auth" {...userLoading}> <CircularProgress/> </Layout>
 
     if (userLoading.user) {
         replace('/')
