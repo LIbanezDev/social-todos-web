@@ -15,6 +15,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/pickers": "^3.2.10",
     "apollo-upload-client": "^14.1.2",
+    "cors": "^2.8.5",
     "date-fns": "^2.16.1",
     "emoji-picker-react": "^3.2.4",
     "formik": "^2.2.1",
