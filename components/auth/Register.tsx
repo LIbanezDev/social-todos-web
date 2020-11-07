@@ -39,7 +39,7 @@ const Register = () => {
                     <Formik
                         initialValues={initialValues}
                         onSubmit={async (values, formikHelpers) => {
-                            const {data: {register: res}} = await register({
+                            const {data} = await register({
                                 variables: {
                                     data: {
                                         ...values,
@@ -47,10 +47,10 @@ const Register = () => {
                                     },
                                 }
                             })
-                            enqueueSnackbar(res.msg, {
-                                variant: res.ok ? "success" : "error"
+                            enqueueSnackbar(data.register.msg, {
+                                variant: data.register.ok ? "success" : "error"
                             })
-                            if (res.ok) {
+                            if (data.register.ok) {
                                 formikHelpers.resetForm();
                                 setImageSrc(null)
                             }
