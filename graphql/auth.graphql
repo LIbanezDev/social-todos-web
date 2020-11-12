@@ -42,13 +42,6 @@ query me {
         github
         image
         google
-        photos {
-            id
-            filename
-            description
-            isPublished
-            name
-        }
     }
 }
 

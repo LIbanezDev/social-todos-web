@@ -12,6 +12,52 @@ interface IMutationResponse {
     ok: Boolean!
 }
 
+"Data on versions of this GIF with a fixed height of 200 pixels. Good for mobile use."
+type FixedImage {
+    "The height of this GIF in pixels."
+    height: String!
+    "size: string"
+    size: String!
+    "The publicly-accessible direct URL for this GIF for this size of the GIF"
+    url: String!
+    "The width of this GIF in pixels."
+    width: String!
+}
+
+"GIF Objects are returned from most of GIPHY API's Endpoints. These objects contain a variety of information, such as the Image Object, which itself includes the URLS for multiple different GIFS formats and sizes."
+type Giphy {
+    "The unique bit.ly URL for this GIF"
+    bitly_url: String!
+    "The date this GIF was added to the GIPHY database."
+    create_datetime: String!
+    "A URL used for embedding this GIF"
+    embed_url: String!
+    "This GIF's unique ID"
+    id: String!
+    "An object containing data for various available formats and sizes of this GIF."
+    images: Image!
+    "The MPAA-style rating for this content. Examples include Y, G, PG, PG-13 and R"
+    rating: String!
+    "The page on which this GIF was found"
+    source: String!
+    "The title that appears on giphy.com for this GIF.d"
+    title: String!
+    "By default, this is almost always GIF."
+    type: String!
+    "The unique URL for this GIF"
+    url: String!
+    "The username this GIF is attached to, if applicable"
+    username: String!
+}
+
+"The Images Object found in the GIF Object contains a series of Rendition Objects. These Rendition Objects includes the URLs and sizes for the many different renditions we offer for each GIF."
+type Image {
+    "Data on versions of this GIF with a fixed height of 200 pixels. Good for mobile use."
+    fixed_height: FixedImage!
+    "Data on versions of this GIF with a fixed width of 200 pixels. Good for mobile use."
+    fixed_width: FixedImage!
+}
+
 type LoginResponse implements IMutationResponse {
     errors: [MutationError!]
     msg: String
@@ -37,9 +83,6 @@ type MessageResponse implements IMutationResponse {
 }
 
 type Mutation {
-    createPhoto(data: PhotoData!): PhotoResponse!
-    deletePhoto(ID: Float!): PhotoResponse!
-    editPhoto(ID: Float!, data: PhotoEditData!): PhotoResponse!
     enviarMensaje(message: String!, to: Float!): MessageResponse!
     login(email: String!, password: String!): LoginResponse!
     loginWithToken(data: SocialRegisterInput!): LoginResponse!
@@ -51,35 +94,13 @@ type MutationError {
     path: String
 }
 
-type Photo {
-    description: String!
-    filename: String!
-    id: ID!
-    isPublished: Boolean!
-    name: String!
-    user: User
-    views: Float
-}
-
-type PhotoResponse implements IMutationResponse {
-    errors: [MutationError!]
-    msg: String
-    ok: Boolean!
-    photo: Photo
-}
-
-type PhotosResponse implements IMutationResponse {
-    errors: [MutationError!]
-    msg: String
-    ok: Boolean!
-    photos: [Photo!]!
-}
-
 type Query {
     me: User
     myChat(with: Int!): [Message!]!
-    photo(ID: Float!): Photo
-    photos: [Photo!]!
+    "Search gifs"
+    searchGifs(query: String!): [Giphy!]
+    "Trending giphpys"
+    trendingGifs(limit: Float = 25.0, offset: Float = 0.0): [Giphy!]
     users: [User!]!
 }
 
@@ -94,6 +115,11 @@ type Subscription {
     esperarNuevosMensajes: Message!
 }
 
+type Team {
+    name: String!
+    users: [User!]!
+}
+
 "Registered users"
 type User {
     age: Float!
@@ -104,34 +130,15 @@ type User {
     id: ID!
     image: String
     name: String!
-    photos: [Photo!]!
     receivedMessages: [Message!]!
     sentMessages: [Message!]!
+    teams: [Team!]!
 }
 
 "External auth apps like GitHub or Google"
 enum EXTERNAL_AUTH_APPS {
     GitHub
     Google
-}
-
-"Informacion necesaria para agregar fotos!"
-input PhotoData {
-    actorID: Float!
-    description: String!
-    filename: String!
-    isPublished: Boolean!
-    name: String!
-    views: Float!
-}
-
-"Informacion opcional para editar fotos!"
-input PhotoEditData {
-    actorID: Float
-    description: String
-    filename: String
-    isPublished: Boolean
-    name: String
 }
 
 "Datos necesarios para ingresar mediante una aplicacion externa como GitHub o Google"

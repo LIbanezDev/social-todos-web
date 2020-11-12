@@ -5,7 +5,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import {useRouter} from "next/router";
 import Link from "next/link";
 import {ExitToApp, Home, Lock, WhatsApp} from "@material-ui/icons";
 import {useFetchUser} from "../../hooks/useFetchUser";
@@ -42,15 +41,15 @@ const Header = () => {
                             Social Todos
                         </Typography>
                         {user === null ?
-                            <Link href="/auth">
+                            <Link href={"/auth"}>
                                 <Button color="inherit" endIcon={<Lock/>}>Auth</Button>
                             </Link>
                             :
                             <>
-                                <Link href="/chat">
+                                <Link href={"/chat"}>
                                     <Button color="inherit" endIcon={<WhatsApp/>}>Chat</Button>
                                 </Link>
-                                <Link href="/profile">
+                                <Link href={"/profile"}>
                                     <Button color="inherit" endIcon={<PersonIcon/>}>Profile</Button>
                                 </Link>
                                 <Button color="inherit" onClick={() => {
