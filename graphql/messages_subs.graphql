@@ -1,41 +1,41 @@
 fragment MessagePayload on Message {
-    content
-    date
-    receiver {
-        id
-        name
-        age
-        image
-    }
-    sender {
-        id
-        name
-        age
-        image
-    }
+	content
+	date
+	receiver {
+		id
+		name
+		age
+		image
+	}
+	sender {
+		id
+		name
+		age
+		image
+	}
 }
 subscription subToAll {
-    esperarNuevosMensajes {
-        ...MessagePayload
-    }
+	esperarNuevosMensajes {
+		...MessagePayload
+	}
 }
 
 mutation sendMessage($msg: String!, $to: Float!) {
-    enviarMensaje(message: $msg, to: $to) {
-        ok
-        msg
-        errors {
-            msg
-            path
-        }
-        message {
-            ...MessagePayload
-        }
-    }
+	enviarMensaje(message: $msg, to: $to) {
+		ok
+		msg
+		errors {
+			msg
+			path
+		}
+		message {
+			...MessagePayload
+		}
+	}
 }
 
 query getChatWith($with: Int!) {
-    myChat(with: $with) {
-        ...MessagePayload
-    }
+	myChat(with: $with) {
+		...MessagePayload
+	}
 }

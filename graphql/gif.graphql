@@ -1,12 +1,12 @@
 query getTrendingGifs {
-    trendingGifs {
-        id
-        title
-        url
-        images {
-            fixed_height{
-                url
-            }
-        }
-    }
+	trendingGifs {
+		id
+		title
+		url
+		images {
+			fixed_height {
+				url
+			}
+		}
+	}
 }

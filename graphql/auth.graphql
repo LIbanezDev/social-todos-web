@@ -1,63 +1,60 @@
-
 mutation register($data: UserRegisterInput!) {
-    register(data: $data) {
-        ok
-        msg
-        errors {
-            msg
-            path
-        }
-        user {
-            id
-            age
-            email
-        }
-    }
+	register(data: $data) {
+		ok
+		msg
+		errors {
+			msg
+			path
+		}
+		user {
+			id
+			age
+			email
+		}
+	}
 }
 
-
 mutation login($email: String!, $pass: String!) {
-    login(email: $email, password: $pass) {
-        ok
-        msg
-        errors {
-            msg
-            path
-        }
-        token
-        user {
-            id
-            name
-        }
-    }
+	login(email: $email, password: $pass) {
+		ok
+		msg
+		errors {
+			msg
+			path
+		}
+		token
+		user {
+			id
+			name
+		}
+	}
 }
 
 query me {
-    me {
-        id
-        name
-        email
-        age
-        description
-        github
-        image
-        google
-    }
+	me {
+		id
+		name
+		email
+		age
+		description
+		github
+		image
+		google
+	}
 }
 
 mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
-    loginWithToken(data: {token: $token, type: $type}) {
-        ok
-        msg
-        token
-    }
+	loginWithToken(data: { token: $token, type: $type }) {
+		ok
+		msg
+		token
+	}
 }
 
 query getUsers {
-    users {
-        id
-        name
-        image
-    }
+	users {
+		id
+		name
+		image
+	}
 }
-
