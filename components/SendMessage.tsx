@@ -15,6 +15,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Send, InsertEmoticon } from '@material-ui/icons/';
 import { useApolloClient } from '@apollo/client';
 import dynamic from 'next/dynamic';
+import { IEmojiData } from 'emoji-picker-react';
 
 const Picker = dynamic(() => import('emoji-picker-react'), {
 	ssr: false,
@@ -56,7 +57,7 @@ export const SendMessage = ({
 	const { cache } = useApolloClient();
 	const [openEmojis, setOpenEmojis] = useState(false);
 
-	const onEmojiClick = (event: Event, emojiObject: EmojiObject) => {
+	const onEmojiClick = (event: MouseEvent, emojiObject: IEmojiData) => {
 		setInputValues(prevState => ({
 			...prevState,
 			msg: prevState.msg + emojiObject.emoji,
