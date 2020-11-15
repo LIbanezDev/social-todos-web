@@ -1,10 +1,7 @@
 import React from 'react';
 import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
 import { useSnackbar } from 'notistack';
-import {
-	External_Auth_Apps,
-	useSocialLoginMutation,
-} from '../../__generated__/GraphQLTypes';
+import { External_Auth_Apps, useSocialLoginMutation } from '../../__generated__/GraphQLTypes';
 
 const GoogleButton = () => {
 	const [socialLogin] = useSocialLoginMutation();
@@ -15,18 +12,20 @@ const GoogleButton = () => {
 		const { data, errors } = await socialLogin({
 			variables: {
 				token: response.tokenId,
-				type: External_Auth_Apps.Google,
-			},
+				type: External_Auth_Apps.Google
+			}
 		});
 		if (errors) {
 			return enqueueSnackbar(
 				'Error con la solicitud, intente nuevamente',
-				{ variant: 'error' }
+				{
+					variant: 'error'
+				}
 			);
 		}
 		if (data.loginWithToken.ok) {
 			enqueueSnackbar('Bienvenido a la aplicación!', {
-				variant: 'success',
+				variant: 'success'
 			});
 			localStorage.setItem('token', data.loginWithToken.token);
 			window.location.href = '/';
