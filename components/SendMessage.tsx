@@ -33,14 +33,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }));
 
-interface EmojiObject {
-	activeSkinTone: string;
-	emoji: string;
-	names: Array<2>;
-	originalUnified: string;
-	unified: string;
-}
-
 export const SendMessage = ({
 	setMessages,
 	to,

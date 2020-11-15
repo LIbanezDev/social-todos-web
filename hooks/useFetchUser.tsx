@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
 	ApolloClient,
 	ApolloQueryResult,
+	NormalizedCacheObject,
 	useApolloClient,
 } from '@apollo/client';
 import { MeDocument, MeQuery } from '../__generated__/GraphQLTypes';
@@ -14,7 +15,7 @@ declare global {
 }
 
 export async function fetchUser(
-	client: ApolloClient<object>
+	client: ApolloClient<NormalizedCacheObject>
 ): Promise<MeQuery> {
 	if (typeof window !== 'undefined' && window.__user) {
 		return window.__user;
@@ -45,7 +46,9 @@ export function useFetchUser({ required }: FetchUserProps) {
 		() => !(typeof window !== 'undefined' && window.__user)
 	);
 	const { replace } = useRouter();
-	const apolloClient = useApolloClient();
+	const apolloClient = useApolloClient() as ApolloClient<
+		NormalizedCacheObject
+	>;
 
 	const [user, setUser] = useState<MeQuery | null>(() => {
 		if (typeof window === 'undefined') {
