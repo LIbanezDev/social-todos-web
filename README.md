@@ -1,19 +1,22 @@
-# Social Todos Server
+# Social Todos Web
 
-Social Todos es una aplicación sobre las famosas ToDos, o "cosas por hacer", las cuales, como su nombre menciona, son acciones que serán llevadas a cabo en un futuro.
-Esta aplicación trata de llevar esa tan sencilla idea a un software con el cual usuarios se puedan compartir sus todos, crear equipos, asignar tareas, chatear, ingresar
-con redes sociales, entre otras cosas!
+Esta aplicación sobre toDos trata de llevar esta tan sencilla idea a un software con el cual usuarios se puedan compartir sus todos, crear equipos, asignar tareas, chatear, ingresar
+con redes sociales, entre otras cosas.
 
-## Tecnologías utilizadas
+La aplicación está construida completamente `type-safety`, ya que utiliza typescript y graphql, los cuales en conjunto con la libreria graphql code-generator, la cual se encarga de generar los types correspondientes basados en un schema y operaciones de graphql, favorecen la escalabilidad, mantenibilidad y refactor de la aplicación.
 
-![TypeScript](https://gustavodohara.com/blogangular/wp-content/uploads/2018/08/typescript-150x150.png)
-![NextJS](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Nextjs-logo.svg/1200px-Nextjs-logo.svg.png)
+## Tecnologías utilizadas en la web
 
-## Usage
+-   Typescript
+-   React
+-   NextJS `Client Side Rendering & Incremental Static Re-generation`
+-   GraphQL & GraphQL code generator
+
+## Uso
 
 ```bash
-npm install
-npm run generate // Generate types based on graphql Schema
+npm i
+npm run generate  #generate types based on graphql Schema
 npm run dev
 ```
 
