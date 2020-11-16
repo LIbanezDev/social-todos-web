@@ -12,6 +12,8 @@ interface IMutationResponse {
 	ok: Boolean!
 }
 
+union NotificationSubscription = FriendRequest | Message
+
 "Data on versions of this GIF with a fixed height of 200 pixels. Good for mobile use."
 type FixedImage {
 	"The height of this GIF in pixels."
@@ -22,6 +24,14 @@ type FixedImage {
 	url: String!
 	"The width of this GIF in pixels."
 	width: String!
+}
+
+"Solicitudes de amistad entre usuarios"
+type FriendRequest {
+	friendshipState: Boolean!
+	id: ID!
+	receiver: User!
+	sender: User!
 }
 
 "GIF Objects are returned from most of GIPHY API's Endpoints. These objects contain a variety of information, such as the Image Object, which itself includes the URLS for multiple different GIFS formats and sizes."
@@ -83,10 +93,14 @@ type MessageResponse implements IMutationResponse {
 }
 
 type Mutation {
+	answerFriendRequest(accept: Boolean!, requestId: Float!): Boolean!
+	createTeam(data: CreateTeamInput!): TeamResponse!
 	enviarMensaje(message: String!, to: Float!): MessageResponse!
+	joinTeam("Team ID" id: Float!): TeamResponse!
 	login(email: String!, password: String!): LoginResponse!
 	loginWithToken(data: SocialRegisterInput!): LoginResponse!
-	register(data: UserRegisterInput!): RegisterResponse!
+	register(data: UserRegisterInput!): UserResponse!
+	sendFriendRequest(to: Float!): UserResponse!
 }
 
 type MutationError {
@@ -97,27 +111,34 @@ type MutationError {
 type Query {
 	me: User
 	myChat(with: Int!): [Message!]!
+	myFriendRequests: [FriendRequest!]!
 	"Search gifs"
 	searchGifs(query: String!): [Giphy!]
+	"Get One Team by team id param"
+	team(id: Float!): Team
+	"Get Teams!"
+	teams: [Team!]!
 	"Trending giphpys"
 	trendingGifs(limit: Float = 25.0, offset: Float = 0.0): [Giphy!]
 	users: [User!]!
 }
 
-type RegisterResponse implements IMutationResponse {
-	errors: [MutationError!]
-	msg: String
-	ok: Boolean!
-	user: User
-}
-
 type Subscription {
-	esperarNuevosMensajes: Message!
+	waitNotifications: NotificationSubscription!
 }
 
 type Team {
+	id: Float!
 	name: String!
-	users: [User!]!
+	password: String
+	users: [UserToTeam!]!
+}
+
+type TeamResponse implements IMutationResponse {
+	errors: [MutationError!]
+	msg: String
+	ok: Boolean!
+	team: Team
 }
 
 "Registered users"
@@ -125,6 +146,7 @@ type User {
 	age: Float!
 	description: String!
 	email: String!
+	friends: [User!]!
 	github: Boolean!
 	google: Boolean!
 	id: ID!
@@ -132,13 +154,36 @@ type User {
 	name: String!
 	receivedMessages: [Message!]!
 	sentMessages: [Message!]!
-	teams: [Team!]!
+	teams: [UserToTeam!]!
+}
+
+type UserResponse implements IMutationResponse {
+	errors: [MutationError!]
+	msg: String
+	ok: Boolean!
+	user: User
+}
+
+type UserToTeam {
+	team: Team!
+	user: User!
+	userIsAdmin: Boolean!
 }
 
 "External auth apps like GitHub or Google"
 enum EXTERNAL_AUTH_APPS {
 	GitHub
 	Google
+}
+
+input CreateTeamInput {
+	"Team optional description"
+	description: String
+	image: Upload
+	"Team Name"
+	name: String!
+	"Team optional password"
+	password: String
 }
 
 "Datos necesarios para ingresar mediante una aplicacion externa como GitHub o Google"
@@ -152,7 +197,6 @@ input UserRegisterInput {
 	bornDate: DateTime!
 	email: String!
 	image: Upload
-	imageURL: String
 	name: String!
 	password: String
 }

@@ -69,6 +69,7 @@ const Users = ({
 							return (
 								<ListItem
 									button
+									key={u.id}
 									selected={selectedUser === u.id}
 									onClick={event => {
 										handleChangeChatClick(event, u.id);
@@ -78,13 +79,12 @@ const Users = ({
 										<Avatar
 											alt='Remy Sharp'
 											src={
-												u.image.slice(0, 8) ===
-												'https://'
+												!u.image
+													? 'https://storage.googleapis.com/social_todos/users/default-graph.png'
+													: u.image.slice(0, 8) ===
+													  'https://'
 													? u.image
-													: `https://storage.googleapis.com/social_todos/${
-															u.image ||
-															'users/default-avatar.jpg'
-													  }`
+													: `https://storage.googleapis.com/social_todos/${u.image}`
 											}
 										/>
 									</ListItemIcon>

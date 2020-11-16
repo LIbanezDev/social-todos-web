@@ -18,6 +18,58 @@ export type Scalars = {
   Upload: any;
 };
 
+/** Mensajes enviados entre los usuarios. */
+export type Message = {
+  __typename?: 'Message';
+  id: Scalars['ID'];
+  date: Scalars['DateTime'];
+  content: Scalars['String'];
+  sender: User;
+  receiver: User;
+};
+
+
+export type Team = {
+  __typename?: 'Team';
+  id: Scalars['Float'];
+  name: Scalars['String'];
+  password?: Maybe<Scalars['String']>;
+  users: Array<UserToTeam>;
+};
+
+export type UserToTeam = {
+  __typename?: 'UserToTeam';
+  userIsAdmin: Scalars['Boolean'];
+  user: User;
+  team: Team;
+};
+
+/** Registered users */
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  age: Scalars['Float'];
+  description: Scalars['String'];
+  google: Scalars['Boolean'];
+  github: Scalars['Boolean'];
+  email: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
+  friends: Array<User>;
+  sentMessages: Array<Message>;
+  receivedMessages: Array<Message>;
+  teams: Array<UserToTeam>;
+};
+
+/** Solicitudes de amistad entre usuarios */
+export type FriendRequest = {
+  __typename?: 'FriendRequest';
+  id: Scalars['ID'];
+  friendshipState: Scalars['Boolean'];
+  sender: User;
+  receiver: User;
+};
+
 /** Data on versions of this GIF with a fixed height of 200 pixels. Good for mobile use. */
 export type FixedImage = {
   __typename?: 'FixedImage';
@@ -73,39 +125,6 @@ export type MutationError = {
   msg?: Maybe<Scalars['String']>;
 };
 
-export type Team = {
-  __typename?: 'Team';
-  name: Scalars['String'];
-  users: Array<User>;
-};
-
-/** Registered users */
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  age: Scalars['Float'];
-  description: Scalars['String'];
-  google: Scalars['Boolean'];
-  github: Scalars['Boolean'];
-  email: Scalars['String'];
-  image?: Maybe<Scalars['String']>;
-  sentMessages: Array<Message>;
-  receivedMessages: Array<Message>;
-  teams: Array<Team>;
-};
-
-/** Mensajes enviados entre los usuarios. */
-export type Message = {
-  __typename?: 'Message';
-  id: Scalars['ID'];
-  date: Scalars['DateTime'];
-  content: Scalars['String'];
-  sender: User;
-  receiver: User;
-};
-
-
 export type MessageResponse = IMutationResponse & {
   __typename?: 'MessageResponse';
   ok: Scalars['Boolean'];
@@ -114,8 +133,16 @@ export type MessageResponse = IMutationResponse & {
   message?: Maybe<Message>;
 };
 
-export type RegisterResponse = IMutationResponse & {
-  __typename?: 'RegisterResponse';
+export type TeamResponse = IMutationResponse & {
+  __typename?: 'TeamResponse';
+  ok: Scalars['Boolean'];
+  msg?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<MutationError>>;
+  team?: Maybe<Team>;
+};
+
+export type UserResponse = IMutationResponse & {
+  __typename?: 'UserResponse';
   ok: Scalars['Boolean'];
   msg?: Maybe<Scalars['String']>;
   errors?: Maybe<Array<MutationError>>;
@@ -137,6 +164,17 @@ export type IMutationResponse = {
   errors?: Maybe<Array<MutationError>>;
 };
 
+export type CreateTeamInput = {
+  /** Team Name */
+  name: Scalars['String'];
+  /** Team optional password */
+  password?: Maybe<Scalars['String']>;
+  /** Team optional description */
+  description?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['Upload']>;
+};
+
+
 /** Informacion necesaria para crear nuevos usuarios */
 export type UserRegisterInput = {
   name: Scalars['String'];
@@ -144,9 +182,7 @@ export type UserRegisterInput = {
   password?: Maybe<Scalars['String']>;
   bornDate: Scalars['DateTime'];
   image?: Maybe<Scalars['Upload']>;
-  imageURL?: Maybe<Scalars['String']>;
 };
-
 
 /** Datos necesarios para ingresar mediante una aplicacion externa como GitHub o Google */
 export type SocialRegisterInput = {
@@ -167,6 +203,11 @@ export type Query = {
   /** Search gifs */
   searchGifs?: Maybe<Array<Giphy>>;
   myChat: Array<Message>;
+  /** Get Teams! */
+  teams: Array<Team>;
+  /** Get One Team by team id param */
+  team?: Maybe<Team>;
+  myFriendRequests: Array<FriendRequest>;
   me?: Maybe<User>;
   users: Array<User>;
 };
@@ -187,18 +228,37 @@ export type QueryMyChatArgs = {
   with: Scalars['Int'];
 };
 
+
+export type QueryTeamArgs = {
+  id: Scalars['Float'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   enviarMensaje: MessageResponse;
-  register: RegisterResponse;
+  joinTeam: TeamResponse;
+  createTeam: TeamResponse;
+  register: UserResponse;
   login: LoginResponse;
   loginWithToken: LoginResponse;
+  sendFriendRequest: UserResponse;
+  answerFriendRequest: Scalars['Boolean'];
 };
 
 
 export type MutationEnviarMensajeArgs = {
   message: Scalars['String'];
   to: Scalars['Float'];
+};
+
+
+export type MutationJoinTeamArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type MutationCreateTeamArgs = {
+  data: CreateTeamInput;
 };
 
 
@@ -217,10 +277,61 @@ export type MutationLoginWithTokenArgs = {
   data: SocialRegisterInput;
 };
 
+
+export type MutationSendFriendRequestArgs = {
+  to: Scalars['Float'];
+};
+
+
+export type MutationAnswerFriendRequestArgs = {
+  accept: Scalars['Boolean'];
+  requestId: Scalars['Float'];
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
-  esperarNuevosMensajes: Message;
+  waitNotifications: NotificationSubscription;
 };
+
+export type NotificationSubscription = Message | FriendRequest;
+
+type MutationResponse_MessageResponse_Fragment = (
+  { __typename?: 'MessageResponse' }
+  & Pick<MessageResponse, 'ok' | 'msg'>
+  & { errors?: Maybe<Array<(
+    { __typename?: 'MutationError' }
+    & Pick<MutationError, 'msg' | 'path'>
+  )>> }
+);
+
+type MutationResponse_TeamResponse_Fragment = (
+  { __typename?: 'TeamResponse' }
+  & Pick<TeamResponse, 'ok' | 'msg'>
+  & { errors?: Maybe<Array<(
+    { __typename?: 'MutationError' }
+    & Pick<MutationError, 'msg' | 'path'>
+  )>> }
+);
+
+type MutationResponse_UserResponse_Fragment = (
+  { __typename?: 'UserResponse' }
+  & Pick<UserResponse, 'ok' | 'msg'>
+  & { errors?: Maybe<Array<(
+    { __typename?: 'MutationError' }
+    & Pick<MutationError, 'msg' | 'path'>
+  )>> }
+);
+
+type MutationResponse_LoginResponse_Fragment = (
+  { __typename?: 'LoginResponse' }
+  & Pick<LoginResponse, 'ok' | 'msg'>
+  & { errors?: Maybe<Array<(
+    { __typename?: 'MutationError' }
+    & Pick<MutationError, 'msg' | 'path'>
+  )>> }
+);
+
+export type MutationResponseFragment = MutationResponse_MessageResponse_Fragment | MutationResponse_TeamResponse_Fragment | MutationResponse_UserResponse_Fragment | MutationResponse_LoginResponse_Fragment;
 
 export type RegisterMutationVariables = Exact<{
   data: UserRegisterInput;
@@ -230,15 +341,12 @@ export type RegisterMutationVariables = Exact<{
 export type RegisterMutation = (
   { __typename?: 'Mutation' }
   & { register: (
-    { __typename?: 'RegisterResponse' }
-    & Pick<RegisterResponse, 'ok' | 'msg'>
-    & { errors?: Maybe<Array<(
-      { __typename?: 'MutationError' }
-      & Pick<MutationError, 'msg' | 'path'>
-    )>>, user?: Maybe<(
+    { __typename?: 'UserResponse' }
+    & { user?: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id' | 'age' | 'email'>
     )> }
+    & MutationResponse_UserResponse_Fragment
   ) }
 );
 
@@ -252,15 +360,28 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'LoginResponse' }
-    & Pick<LoginResponse, 'ok' | 'msg' | 'token'>
-    & { errors?: Maybe<Array<(
-      { __typename?: 'MutationError' }
-      & Pick<MutationError, 'msg' | 'path'>
-    )>>, user?: Maybe<(
+    & Pick<LoginResponse, 'token'>
+    & { user?: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name'>
     )> }
+    & MutationResponse_LoginResponse_Fragment
   ) }
+);
+
+export type GetFriendRequestsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFriendRequestsQuery = (
+  { __typename?: 'Query' }
+  & { myFriendRequests: Array<(
+    { __typename?: 'FriendRequest' }
+    & Pick<FriendRequest, 'id'>
+    & { sender: (
+      { __typename?: 'User' }
+      & Pick<User, 'name' | 'image'>
+    ) }
+  )> }
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -271,6 +392,17 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name' | 'email' | 'age' | 'description' | 'github' | 'image' | 'google'>
+    & { teams: Array<(
+      { __typename?: 'UserToTeam' }
+      & Pick<UserToTeam, 'userIsAdmin'>
+      & { team: (
+        { __typename?: 'Team' }
+        & Pick<Team, 'id' | 'name'>
+      ) }
+    )>, friends: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'email' | 'image' | 'github' | 'google'>
+    )> }
   )> }
 );
 
@@ -284,7 +416,8 @@ export type SocialLoginMutation = (
   { __typename?: 'Mutation' }
   & { loginWithToken: (
     { __typename?: 'LoginResponse' }
-    & Pick<LoginResponse, 'ok' | 'msg' | 'token'>
+    & Pick<LoginResponse, 'token'>
+    & MutationResponse_LoginResponse_Fragment
   ) }
 );
 
@@ -334,9 +467,15 @@ export type SubToAllSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 export type SubToAllSubscription = (
   { __typename?: 'Subscription' }
-  & { esperarNuevosMensajes: (
+  & { waitNotifications: (
     { __typename?: 'Message' }
     & MessagePayloadFragment
+  ) | (
+    { __typename?: 'FriendRequest' }
+    & { sender: (
+      { __typename?: 'User' }
+      & Pick<User, 'name' | 'image'>
+    ) }
   ) }
 );
 
@@ -374,6 +513,16 @@ export type GetChatWithQuery = (
   )> }
 );
 
+export const MutationResponseFragmentDoc = gql`
+    fragment MutationResponse on IMutationResponse {
+  ok
+  msg
+  errors {
+    msg
+    path
+  }
+}
+    `;
 export const MessagePayloadFragmentDoc = gql`
     fragment MessagePayload on Message {
   content
@@ -395,12 +544,7 @@ export const MessagePayloadFragmentDoc = gql`
 export const RegisterDocument = gql`
     mutation register($data: UserRegisterInput!) {
   register(data: $data) {
-    ok
-    msg
-    errors {
-      msg
-      path
-    }
+    ...MutationResponse
     user {
       id
       age
@@ -408,7 +552,7 @@ export const RegisterDocument = gql`
     }
   }
 }
-    `;
+    ${MutationResponseFragmentDoc}`;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 export type RegisterComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<RegisterMutation, RegisterMutationVariables>, 'mutation'>;
 
@@ -443,12 +587,7 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutatio
 export const LoginDocument = gql`
     mutation login($email: String!, $pass: String!) {
   login(email: $email, password: $pass) {
-    ok
-    msg
-    errors {
-      msg
-      path
-    }
+    ...MutationResponse
     token
     user {
       id
@@ -456,7 +595,7 @@ export const LoginDocument = gql`
     }
   }
 }
-    `;
+    ${MutationResponseFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 export type LoginComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<LoginMutation, LoginMutationVariables>, 'mutation'>;
 
@@ -489,6 +628,48 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const GetFriendRequestsDocument = gql`
+    query getFriendRequests {
+  myFriendRequests {
+    id
+    sender {
+      name
+      image
+    }
+  }
+}
+    `;
+export type GetFriendRequestsComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>, 'query'>;
+
+    export const GetFriendRequestsComponent = (props: GetFriendRequestsComponentProps) => (
+      <ApolloReactComponents.Query<GetFriendRequestsQuery, GetFriendRequestsQueryVariables> query={GetFriendRequestsDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetFriendRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetFriendRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendRequestsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFriendRequestsQuery(baseOptions?: Apollo.QueryHookOptions<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>) {
+        return Apollo.useQuery<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>(GetFriendRequestsDocument, baseOptions);
+      }
+export function useGetFriendRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>) {
+          return Apollo.useLazyQuery<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>(GetFriendRequestsDocument, baseOptions);
+        }
+export type GetFriendRequestsQueryHookResult = ReturnType<typeof useGetFriendRequestsQuery>;
+export type GetFriendRequestsLazyQueryHookResult = ReturnType<typeof useGetFriendRequestsLazyQuery>;
+export type GetFriendRequestsQueryResult = Apollo.QueryResult<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>;
 export const MeDocument = gql`
     query me {
   me {
@@ -500,6 +681,21 @@ export const MeDocument = gql`
     github
     image
     google
+    teams {
+      userIsAdmin
+      team {
+        id
+        name
+      }
+    }
+    friends {
+      id
+      name
+      email
+      image
+      github
+      google
+    }
   }
 }
     `;
@@ -537,12 +733,11 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const SocialLoginDocument = gql`
     mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
   loginWithToken(data: {token: $token, type: $type}) {
-    ok
-    msg
+    ...MutationResponse
     token
   }
 }
-    `;
+    ${MutationResponseFragmentDoc}`;
 export type SocialLoginMutationFn = Apollo.MutationFunction<SocialLoginMutation, SocialLoginMutationVariables>;
 export type SocialLoginComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<SocialLoginMutation, SocialLoginMutationVariables>, 'mutation'>;
 
@@ -662,8 +857,16 @@ export type GetTrendingGifsLazyQueryHookResult = ReturnType<typeof useGetTrendin
 export type GetTrendingGifsQueryResult = Apollo.QueryResult<GetTrendingGifsQuery, GetTrendingGifsQueryVariables>;
 export const SubToAllDocument = gql`
     subscription subToAll {
-  esperarNuevosMensajes {
-    ...MessagePayload
+  waitNotifications {
+    ... on Message {
+      ...MessagePayload
+    }
+    ... on FriendRequest {
+      sender {
+        name
+        image
+      }
+    }
   }
 }
     ${MessagePayloadFragmentDoc}`;

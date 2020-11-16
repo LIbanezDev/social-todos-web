@@ -1,5 +1,4 @@
 import React from 'react';
-import { Upload } from '../components/auth/FileUpload';
 import { useFetchUser } from '../hooks/useFetchUser';
 import Layout from '../components/layout/Layout';
 import Gifs from '../components/Gifs';
@@ -16,7 +15,6 @@ export default function Home() {
 	return (
 		<Layout title='Index' {...userLoading}>
 			{!loading && <Gifs queryResult={data} />}
-			<Upload onChange={() => {}} />
 		</Layout>
 	);
 }

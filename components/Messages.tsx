@@ -10,7 +10,7 @@ const Messages = ({ messages }: { messages: GetChatWithQuery | null }) => {
 			{!messages ? (
 				<Typography variant='body2'> Selecciona un chat </Typography>
 			) : (
-				messages?.myChat.map(msg => (
+				messages.myChat.map(msg => (
 					<Grid
 						container
 						key={msg.date}
@@ -25,8 +25,10 @@ const Messages = ({ messages }: { messages: GetChatWithQuery | null }) => {
 								<Avatar
 									aria-label='recipe'
 									src={
-										msg.sender.image.slice(0, 8) ===
-										'https://'
+										!msg.sender.image
+											? 'https://storage.googleapis.com/social_todos/users/default-graph.png'
+											: msg.sender.image.slice(0, 8) ===
+											  'https://'
 											? msg.sender.image
 											: `https://storage.googleapis.com/social_todos/${
 													msg.sender.image ||

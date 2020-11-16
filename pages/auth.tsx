@@ -9,6 +9,7 @@ import Login from '../components/auth/Login';
 const Auth = () => {
 	const { replace } = useRouter();
 	const userLoading = useFetchUser({ required: false });
+
 	if (userLoading.loading)
 		return (
 			<Layout title='Auth' {...userLoading}>

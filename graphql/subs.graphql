@@ -14,9 +14,18 @@ fragment MessagePayload on Message {
 		image
 	}
 }
+
 subscription subToAll {
-	esperarNuevosMensajes {
-		...MessagePayload
+	waitNotifications {
+		... on Message {
+			...MessagePayload
+		}
+		... on FriendRequest {
+			sender {
+				name
+				image
+			}
+		}
 	}
 }
 

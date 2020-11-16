@@ -17,7 +17,7 @@ export const getConcatenatedSubscriptionsLink = (
 				options: {
 					reconnect: true,
 					connectionParams: {
-						authorization: localStorage.getItem('token'),
+						Authorization: localStorage.getItem('token'),
 					},
 				},
 			});

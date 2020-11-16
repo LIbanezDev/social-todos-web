@@ -1,11 +1,15 @@
+fragment MutationResponse on IMutationResponse {
+	ok
+	msg
+	errors {
+		msg
+		path
+	}
+}
+
 mutation register($data: UserRegisterInput!) {
 	register(data: $data) {
-		ok
-		msg
-		errors {
-			msg
-			path
-		}
+		...MutationResponse
 		user {
 			id
 			age
@@ -16,16 +20,21 @@ mutation register($data: UserRegisterInput!) {
 
 mutation login($email: String!, $pass: String!) {
 	login(email: $email, password: $pass) {
-		ok
-		msg
-		errors {
-			msg
-			path
-		}
+		...MutationResponse
 		token
 		user {
 			id
 			name
+		}
+	}
+}
+
+query getFriendRequests {
+	myFriendRequests {
+		id
+		sender {
+			name
+			image
 		}
 	}
 }
@@ -40,13 +49,27 @@ query me {
 		github
 		image
 		google
+		teams {
+			userIsAdmin
+			team {
+				id
+				name
+			}
+		}
+		friends {
+			id
+			name
+			email
+			image
+			github
+			google
+		}
 	}
 }
 
 mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
 	loginWithToken(data: { token: $token, type: $type }) {
-		ok
-		msg
+		...MutationResponse
 		token
 	}
 }

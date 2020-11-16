@@ -13,7 +13,7 @@ const httpUploadLink: ApolloLink = createUploadLink({
 	uri:
 		process.env.NODE_ENV === 'production'
 			? 'https://social-todos-graph.herokuapp.com/graphql'
-			: 'https://social-todos-graph.herokuapp.com/graphql',
+			: 'http://localhost:4000/graphql',
 	// 'http://localhost:4000/graphql'
 });
 
