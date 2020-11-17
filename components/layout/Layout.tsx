@@ -46,7 +46,7 @@ const Layout: React.FC<Props> = ({
 			</Head>
 			<Header />
 			<main>
-				<Grid container style={{ padding: '10px' }} spacing={1}>
+				<Grid container>
 					{children}
 				</Grid>
 			</main>
