@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 import theme from '../styles/theme';
 import { ThemeProvider } from '@material-ui/styles';
 import { SnackbarProvider } from 'notistack';
-import { createMuiTheme, CssBaseline, Paper } from '@material-ui/core';
+import { createMuiTheme, CssBaseline } from '@material-ui/core';
 
 Router.events.on('routeChangeStart', () => {
 	NProgress.start();
@@ -41,23 +41,16 @@ export default function App({ Component, pageProps }: AppProps) {
 
 	return (
 		<ThemeProvider theme={adaptableTheme}>
-			<Paper style={{ height: '100vh' }}>
-				<ApolloProvider client={apolloClient}>
-					<SnackbarProvider
-						maxSnack={10}
-						anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-						autoHideDuration={2500}
-					>
-						<CssBaseline />
-						{/*<Button color="inherit" endIcon={<NightsStay/>} onClick={() => {
-                            setDarkMode(prev => !prev)
-                        }}>
-                            Dark Mode
-                        </Button>*/}
-						<Component {...pageProps} setDarkMode={setDarkMode} />
-					</SnackbarProvider>
-				</ApolloProvider>
-			</Paper>
+			<ApolloProvider client={apolloClient}>
+				<SnackbarProvider
+					maxSnack={10}
+					anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+					autoHideDuration={2500}
+				>
+					<CssBaseline />
+					<Component {...pageProps} setDarkMode={setDarkMode} />
+				</SnackbarProvider>
+			</ApolloProvider>
 		</ThemeProvider>
 	);
 }
