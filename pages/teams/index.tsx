@@ -15,7 +15,11 @@ const Teams = () => {
 	const userLoading = useFetchUser({ required: false });
 	const { data, loading } = useGetAllTeamsQuery();
 	return (
-		<Layout title={'Teams'} {...userLoading} description="Social Todos - Lista de equipos disponibles, tanto privados como publicos">
+		<Layout
+			title={'Social Todos - Teams'}
+			{...userLoading}
+			description='Social Todos - Lista de equipos disponibles, tanto privados como publicos'
+		>
 			<Grid item xs={12} sm={4}>
 				<CreateTeamForm />
 			</Grid>

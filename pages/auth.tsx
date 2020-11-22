@@ -33,10 +33,10 @@ const Auth = () => {
 			description='Pagina de autenticacion de usuarios para la aplicacion Social Todos,
 					contiene login con github y google'
 		>
-			<Grid item xs={12} sm={6}>
+			<Grid item xs={12} sm={4}>
 				<Login />
 			</Grid>
-			<Grid item xs={12} sm={6}>
+			<Grid item xs={12} sm={4}>
 				<Register />
 			</Grid>
 		</Layout>

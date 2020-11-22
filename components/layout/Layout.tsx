@@ -6,17 +6,17 @@ import {
 	useSubToAllSubscription,
 } from '../../__generated__/GraphQLTypes';
 import { useSnackbar } from 'notistack';
-import Header from './Header';
-import { Grid } from '@material-ui/core';
 import { useApolloClient } from '@apollo/client';
 import { updateCache } from '../../utils/cacheUtils';
+import MenuDrawer from './MenuDrawer';
+import { Grid } from '@material-ui/core';
 
 type Props = {
 	loading?: boolean;
 	title?: string;
 	setMessages?: React.Dispatch<React.SetStateAction<GetChatWithQuery>>;
 	currentChat?: string;
-	description: string
+	description: string;
 };
 
 const Layout: React.FC<Props> = ({
@@ -24,7 +24,7 @@ const Layout: React.FC<Props> = ({
 	title = 'Social Todos',
 	setMessages,
 	currentChat,
-	description = ''
+	description = '',
 }) => {
 	const { data, loading: newNotificationLoading } = useSubToAllSubscription();
 	const { cache } = useApolloClient();
@@ -40,12 +40,11 @@ const Layout: React.FC<Props> = ({
 		<>
 			<Head>
 				<title>{title}</title>
-				<meta name="description" content={description} />
+				<meta name='description' content={description} />
 			</Head>
-			<Header />
-			<main>
+			<MenuDrawer>
 				<Grid container>{children}</Grid>
-			</main>
+			</MenuDrawer>
 			<footer>
 				<hr />
 				<span>I'm here to stay (Footer)</span>

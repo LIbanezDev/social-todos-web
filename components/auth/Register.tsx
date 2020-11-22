@@ -148,10 +148,6 @@ const Register = () => {
 								>
 									Register
 								</Button>
-								<pre>
-									{' '}
-									{JSON.stringify(props.values, null, 4)}
-								</pre>
 							</Form>
 						)}
 					</Formik>
