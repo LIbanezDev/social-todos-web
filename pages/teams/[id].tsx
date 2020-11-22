@@ -20,7 +20,7 @@ const TeamDetails = () => {
 	});
 
 	return (
-		<Layout {...userLoading} title={data.team.name || 'Team page'}>
+		<Layout {...userLoading} title={data?.team.name || 'Team page'}>
 			<pre style={{ fontSize: '2rem' }}>
 				{' '}
 				{JSON.stringify(data, null, 4)}
