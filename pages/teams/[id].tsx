@@ -20,7 +20,15 @@ const TeamDetails = () => {
 	});
 
 	return (
-		<Layout {...userLoading} title={data?.team.name || 'Team page'}>
+		<Layout
+			{...userLoading}
+			title={data?.team.name || 'Team page'}
+			description={
+				'Detalles de equipo ' +
+				data?.team.name +
+				', nombre, usuarios normales y administradores, y mas.'
+			}
+		>
 			<pre style={{ fontSize: '2rem' }}>
 				{' '}
 				{JSON.stringify(data, null, 4)}
@@ -41,7 +49,7 @@ export const getStaticProps: GetStaticProps = async ctx => {
 		props: {
 			initialApolloState: apolloClient.cache.extract(),
 		},
-		revalidate: 1
+		revalidate: 1,
 	};
 };
 
