@@ -1,26 +1,29 @@
 import React from 'react';
 import { useFetchUser } from '../hooks/useFetchUser';
 import Layout from '../components/layout/Layout';
-import { Avatar, CircularProgress, Typography } from '@material-ui/core';
+import { CircularProgress, Typography } from '@material-ui/core';
 import { GitHub } from '@material-ui/icons';
+import Image from 'next/image';
 
 const Profile = () => {
 	const userLoading = useFetchUser({ required: true });
 
 	return (
-		<Layout {...userLoading} title={'Social Todos - Mi Perfil'}>
+		<Layout {...userLoading} title={'Social Todos - Mi Perfil'} description="Mi perfil de social todos">
 			{userLoading.loading ? (
 				<CircularProgress />
 			) : (
 				<React.Fragment>
-					<Avatar
+					<Image
 						src={
 							userLoading.user?.me.github ||
 							userLoading.user?.me.google
 								? userLoading.user.me.image
 								: `https://storage.googleapis.com/social_todos/${userLoading.user.me.image}`
 						}
-						style={{ margin: '5px' }}
+						width={200}
+						height={200}
+						alt={userLoading.user?.me.name}
 					/>
 					<Typography variant='body1'>
 						{userLoading.user.me.name} <br />

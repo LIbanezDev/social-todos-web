@@ -17,7 +17,10 @@ const Chat = () => {
 			{...userLoading}
 			setMessages={setMessages}
 			currentChat={selectedUserId}
+			description="Chat de Social Todos"
+			title="Social Todos - Chat"
 		>
+			<h1> Social Todos Chat </h1>
 			<Grid item xs={2}>
 				<Users
 					setMessages={setMessages}

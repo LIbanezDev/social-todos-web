@@ -6,9 +6,18 @@ import theme from '../styles/theme';
 export default class MyDocument extends Document {
 	render() {
 		return (
-			<Html lang='en'>
+			<Html lang='es'>
 				<Head>
 					<meta name='theme-color' content={theme.primary.main} />
+					<meta
+						httpEquiv='Content-Type'
+						content='text/html; charset=utf-8'
+					/>
+					<meta
+						httpEquiv='Content-Type'
+						content='text/html; charset=ISO-8859-1'
+					/>
+					<meta charSet='utf-8' />
 					<link
 						rel='stylesheet'
 						href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css'

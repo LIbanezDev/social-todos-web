@@ -12,7 +12,12 @@ const Auth = () => {
 
 	if (userLoading.loading)
 		return (
-			<Layout title='Auth' {...userLoading}>
+			<Layout
+				title='Auth'
+				{...userLoading}
+				description='Pagina de autenticacion de usuarios para la aplicacion Social Todos,
+					contiene login con github y google'
+			>
 				<CircularProgress />
 			</Layout>
 		);
@@ -22,7 +27,12 @@ const Auth = () => {
 	}
 
 	return (
-		<Layout title='Auth' {...userLoading}>
+		<Layout
+			title='Social Todos - Ingresa o registrate!'
+			{...userLoading}
+			description='Pagina de autenticacion de usuarios para la aplicacion Social Todos,
+					contiene login con github y google'
+		>
 			<Grid item xs={12} sm={6}>
 				<Login />
 			</Grid>

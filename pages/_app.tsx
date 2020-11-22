@@ -9,6 +9,7 @@ import theme from '../styles/theme';
 import { ThemeProvider } from '@material-ui/styles';
 import { SnackbarProvider } from 'notistack';
 import { createMuiTheme, CssBaseline } from '@material-ui/core';
+import Head from 'next/head';
 
 Router.events.on('routeChangeStart', () => {
 	NProgress.start();
@@ -40,17 +41,25 @@ export default function App({ Component, pageProps }: AppProps) {
 	}, []);
 
 	return (
-		<ThemeProvider theme={adaptableTheme}>
-			<ApolloProvider client={apolloClient}>
-				<SnackbarProvider
-					maxSnack={10}
-					anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-					autoHideDuration={2500}
-				>
-					<CssBaseline />
-					<Component {...pageProps} setDarkMode={setDarkMode} />
-				</SnackbarProvider>
-			</ApolloProvider>
-		</ThemeProvider>
+		<>
+			<Head>
+				<meta
+					name='viewport'
+					content='initial-scale=1.0, width=device-width'
+				/>
+			</Head>
+			<ThemeProvider theme={adaptableTheme}>
+				<ApolloProvider client={apolloClient}>
+					<SnackbarProvider
+						maxSnack={10}
+						anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+						autoHideDuration={2500}
+					>
+						<CssBaseline />
+						<Component {...pageProps} setDarkMode={setDarkMode} />
+					</SnackbarProvider>
+				</ApolloProvider>
+			</ThemeProvider>
+		</>
 	);
 }

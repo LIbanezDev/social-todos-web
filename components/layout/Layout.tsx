@@ -16,13 +16,15 @@ type Props = {
 	title?: string;
 	setMessages?: React.Dispatch<React.SetStateAction<GetChatWithQuery>>;
 	currentChat?: string;
+	description: string
 };
 
 const Layout: React.FC<Props> = ({
 	children,
-	title = 'This is the default title',
+	title = 'Social Todos',
 	setMessages,
 	currentChat,
+	description = ''
 }) => {
 	const { data, loading: newNotificationLoading } = useSubToAllSubscription();
 	const { cache } = useApolloClient();
@@ -38,11 +40,7 @@ const Layout: React.FC<Props> = ({
 		<>
 			<Head>
 				<title>{title}</title>
-				<meta charSet='utf-8' />
-				<meta
-					name='viewport'
-					content='initial-scale=1.0, width=device-width'
-				/>
+				<meta name="description" content={description} />
 			</Head>
 			<Header />
 			<main>

@@ -8,12 +8,18 @@ import {
 } from '../__generated__/GraphQLTypes';
 import { GetStaticProps } from 'next';
 import { initializeApollo } from '../lib/apolloClient';
+import { Typography } from '@material-ui/core';
 
 export default function Home() {
 	const userLoading = useFetchUser({ required: false });
 	const { data, loading } = useGetTrendingGifsQuery();
 	return (
-		<Layout title='Social Todos' {...userLoading}>
+		<Layout
+			title='Social Todos - Inicio'
+			{...userLoading}
+			description='Inicio Social Todos, crea, organiza todos e interactua con tu equipo u amigos'
+		>
+			<Typography variant="h1"> Social Todos </Typography>
 			{!loading && <Gifs queryResult={data} />}
 		</Layout>
 	);
