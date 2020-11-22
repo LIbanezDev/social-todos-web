@@ -41,6 +41,7 @@ export const getStaticProps: GetStaticProps = async ctx => {
 		props: {
 			initialApolloState: apolloClient.cache.extract(),
 		},
+		revalidate: 1
 	};
 };
 
