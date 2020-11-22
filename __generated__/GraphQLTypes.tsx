@@ -33,7 +33,9 @@ export type Team = {
   __typename?: 'Team';
   id: Scalars['Float'];
   name: Scalars['String'];
-  password?: Maybe<Scalars['String']>;
+  description: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
+  isPublic: Scalars['Boolean'];
   users: Array<UserToTeam>;
 };
 
@@ -513,6 +515,69 @@ export type GetChatWithQuery = (
   )> }
 );
 
+export type GetTeamsIdsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTeamsIdsQuery = (
+  { __typename?: 'Query' }
+  & { teams: Array<(
+    { __typename?: 'Team' }
+    & Pick<Team, 'id'>
+  )> }
+);
+
+export type GetTeamByIdQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type GetTeamByIdQuery = (
+  { __typename?: 'Query' }
+  & { team?: Maybe<(
+    { __typename?: 'Team' }
+    & Pick<Team, 'id' | 'name' | 'description' | 'image' | 'isPublic'>
+    & { users: Array<(
+      { __typename?: 'UserToTeam' }
+      & Pick<UserToTeam, 'userIsAdmin'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'image'>
+      ) }
+    )> }
+  )> }
+);
+
+export type GetAllTeamsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllTeamsQuery = (
+  { __typename?: 'Query' }
+  & { teams: Array<(
+    { __typename?: 'Team' }
+    & Pick<Team, 'id' | 'name' | 'isPublic' | 'description' | 'image'>
+  )> }
+);
+
+export type CreateTeamMutationVariables = Exact<{
+  data: CreateTeamInput;
+}>;
+
+
+export type CreateTeamMutation = (
+  { __typename?: 'Mutation' }
+  & { createTeam: (
+    { __typename?: 'TeamResponse' }
+    & Pick<TeamResponse, 'ok' | 'msg'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'MutationError' }
+      & Pick<MutationError, 'msg' | 'path'>
+    )>>, team?: Maybe<(
+      { __typename?: 'Team' }
+      & Pick<Team, 'id' | 'name' | 'image' | 'description' | 'isPublic'>
+    )> }
+  ) }
+);
+
 export const MutationResponseFragmentDoc = gql`
     fragment MutationResponse on IMutationResponse {
   ok
@@ -983,3 +1048,184 @@ export function useGetChatWithLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetChatWithQueryHookResult = ReturnType<typeof useGetChatWithQuery>;
 export type GetChatWithLazyQueryHookResult = ReturnType<typeof useGetChatWithLazyQuery>;
 export type GetChatWithQueryResult = Apollo.QueryResult<GetChatWithQuery, GetChatWithQueryVariables>;
+export const GetTeamsIdsDocument = gql`
+    query getTeamsIds {
+  teams {
+    id
+  }
+}
+    `;
+export type GetTeamsIdsComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetTeamsIdsQuery, GetTeamsIdsQueryVariables>, 'query'>;
+
+    export const GetTeamsIdsComponent = (props: GetTeamsIdsComponentProps) => (
+      <ApolloReactComponents.Query<GetTeamsIdsQuery, GetTeamsIdsQueryVariables> query={GetTeamsIdsDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetTeamsIdsQuery__
+ *
+ * To run a query within a React component, call `useGetTeamsIdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTeamsIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTeamsIdsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTeamsIdsQuery(baseOptions?: Apollo.QueryHookOptions<GetTeamsIdsQuery, GetTeamsIdsQueryVariables>) {
+        return Apollo.useQuery<GetTeamsIdsQuery, GetTeamsIdsQueryVariables>(GetTeamsIdsDocument, baseOptions);
+      }
+export function useGetTeamsIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTeamsIdsQuery, GetTeamsIdsQueryVariables>) {
+          return Apollo.useLazyQuery<GetTeamsIdsQuery, GetTeamsIdsQueryVariables>(GetTeamsIdsDocument, baseOptions);
+        }
+export type GetTeamsIdsQueryHookResult = ReturnType<typeof useGetTeamsIdsQuery>;
+export type GetTeamsIdsLazyQueryHookResult = ReturnType<typeof useGetTeamsIdsLazyQuery>;
+export type GetTeamsIdsQueryResult = Apollo.QueryResult<GetTeamsIdsQuery, GetTeamsIdsQueryVariables>;
+export const GetTeamByIdDocument = gql`
+    query getTeamById($id: Float!) {
+  team(id: $id) {
+    id
+    name
+    description
+    image
+    isPublic
+    users {
+      userIsAdmin
+      user {
+        id
+        name
+        image
+      }
+    }
+  }
+}
+    `;
+export type GetTeamByIdComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetTeamByIdQuery, GetTeamByIdQueryVariables>, 'query'> & ({ variables: GetTeamByIdQueryVariables; skip?: boolean; } | { skip: boolean; });
+
+    export const GetTeamByIdComponent = (props: GetTeamByIdComponentProps) => (
+      <ApolloReactComponents.Query<GetTeamByIdQuery, GetTeamByIdQueryVariables> query={GetTeamByIdDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetTeamByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTeamByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTeamByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTeamByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTeamByIdQuery(baseOptions?: Apollo.QueryHookOptions<GetTeamByIdQuery, GetTeamByIdQueryVariables>) {
+        return Apollo.useQuery<GetTeamByIdQuery, GetTeamByIdQueryVariables>(GetTeamByIdDocument, baseOptions);
+      }
+export function useGetTeamByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTeamByIdQuery, GetTeamByIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetTeamByIdQuery, GetTeamByIdQueryVariables>(GetTeamByIdDocument, baseOptions);
+        }
+export type GetTeamByIdQueryHookResult = ReturnType<typeof useGetTeamByIdQuery>;
+export type GetTeamByIdLazyQueryHookResult = ReturnType<typeof useGetTeamByIdLazyQuery>;
+export type GetTeamByIdQueryResult = Apollo.QueryResult<GetTeamByIdQuery, GetTeamByIdQueryVariables>;
+export const GetAllTeamsDocument = gql`
+    query getAllTeams {
+  teams {
+    id
+    name
+    isPublic
+    description
+    image
+  }
+}
+    `;
+export type GetAllTeamsComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetAllTeamsQuery, GetAllTeamsQueryVariables>, 'query'>;
+
+    export const GetAllTeamsComponent = (props: GetAllTeamsComponentProps) => (
+      <ApolloReactComponents.Query<GetAllTeamsQuery, GetAllTeamsQueryVariables> query={GetAllTeamsDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetAllTeamsQuery__
+ *
+ * To run a query within a React component, call `useGetAllTeamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllTeamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllTeamsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllTeamsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllTeamsQuery, GetAllTeamsQueryVariables>) {
+        return Apollo.useQuery<GetAllTeamsQuery, GetAllTeamsQueryVariables>(GetAllTeamsDocument, baseOptions);
+      }
+export function useGetAllTeamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllTeamsQuery, GetAllTeamsQueryVariables>) {
+          return Apollo.useLazyQuery<GetAllTeamsQuery, GetAllTeamsQueryVariables>(GetAllTeamsDocument, baseOptions);
+        }
+export type GetAllTeamsQueryHookResult = ReturnType<typeof useGetAllTeamsQuery>;
+export type GetAllTeamsLazyQueryHookResult = ReturnType<typeof useGetAllTeamsLazyQuery>;
+export type GetAllTeamsQueryResult = Apollo.QueryResult<GetAllTeamsQuery, GetAllTeamsQueryVariables>;
+export const CreateTeamDocument = gql`
+    mutation createTeam($data: CreateTeamInput!) {
+  createTeam(data: $data) {
+    ok
+    msg
+    errors {
+      msg
+      path
+    }
+    team {
+      id
+      name
+      image
+      description
+      isPublic
+    }
+  }
+}
+    `;
+export type CreateTeamMutationFn = Apollo.MutationFunction<CreateTeamMutation, CreateTeamMutationVariables>;
+export type CreateTeamComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<CreateTeamMutation, CreateTeamMutationVariables>, 'mutation'>;
+
+    export const CreateTeamComponent = (props: CreateTeamComponentProps) => (
+      <ApolloReactComponents.Mutation<CreateTeamMutation, CreateTeamMutationVariables> mutation={CreateTeamDocument} {...props} />
+    );
+    
+
+/**
+ * __useCreateTeamMutation__
+ *
+ * To run a mutation, you first call `useCreateTeamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTeamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTeamMutation, { data, loading, error }] = useCreateTeamMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateTeamMutation(baseOptions?: Apollo.MutationHookOptions<CreateTeamMutation, CreateTeamMutationVariables>) {
+        return Apollo.useMutation<CreateTeamMutation, CreateTeamMutationVariables>(CreateTeamDocument, baseOptions);
+      }
+export type CreateTeamMutationHookResult = ReturnType<typeof useCreateTeamMutation>;
+export type CreateTeamMutationResult = Apollo.MutationResult<CreateTeamMutation>;
+export type CreateTeamMutationOptions = Apollo.BaseMutationOptions<CreateTeamMutation, CreateTeamMutationVariables>;

@@ -56,6 +56,7 @@ const Register = () => {
 									},
 								},
 							});
+							console.log(data);
 							enqueueSnackbar(data.register.msg, {
 								variant: data.register.ok ? 'success' : 'error',
 							});

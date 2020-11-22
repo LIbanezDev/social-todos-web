@@ -46,9 +46,7 @@ const Layout: React.FC<Props> = ({
 			</Head>
 			<Header />
 			<main>
-				<Grid container>
-					{children}
-				</Grid>
+				<Grid container>{children}</Grid>
 			</main>
 			<footer>
 				<hr />

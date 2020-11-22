@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Link from 'next/link';
-import { ExitToApp, Home, Lock, WhatsApp } from '@material-ui/icons';
+import { ExitToApp, Home, Lock, WhatsApp, Group } from '@material-ui/icons';
 import { useFetchUser } from '../../hooks/useFetchUser';
 import PersonIcon from '@material-ui/icons/Person';
 
@@ -52,6 +52,11 @@ const Header = () => {
 							</Link>
 						) : (
 							<>
+								<Link href={'/teams'}>
+									<Button color='inherit' endIcon={<Group />}>
+										Teams
+									</Button>
+								</Link>
 								<Link href={'/chat'}>
 									<Button
 										color='inherit'

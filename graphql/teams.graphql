@@ -1,0 +1,51 @@
+query getTeamsIds {
+	teams {
+		id
+	}
+}
+
+query getTeamById($id: Float!) {
+	team(id: $id) {
+		id
+		name
+		description
+		image
+		isPublic
+		users {
+			userIsAdmin
+			user {
+				id
+				name
+				image
+			}
+		}
+	}
+}
+
+query getAllTeams {
+	teams {
+		id
+		name
+		isPublic
+		description
+		image
+	}
+}
+
+mutation createTeam($data: CreateTeamInput!) {
+	createTeam(data: $data) {
+		ok
+		msg
+		errors {
+			msg
+			path
+		}
+		team {
+			id
+			name
+			image
+			description
+			isPublic
+		}
+	}
+}

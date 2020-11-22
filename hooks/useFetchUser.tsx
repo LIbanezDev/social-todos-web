@@ -69,6 +69,9 @@ export function useFetchUser({ required }: FetchUserProps) {
 			if (isMounted) {
 				// When the user is not logged in but login is required
 				if (required && !user) {
+					if (localStorage.getItem('token')) {
+						localStorage.removeItem('token');
+					}
 					replace('/auth');
 					return;
 				}

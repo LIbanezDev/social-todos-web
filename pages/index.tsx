@@ -13,7 +13,7 @@ export default function Home() {
 	const userLoading = useFetchUser({ required: false });
 	const { data, loading } = useGetTrendingGifsQuery();
 	return (
-		<Layout title='Index' {...userLoading}>
+		<Layout title='Social Todos' {...userLoading}>
 			{!loading && <Gifs queryResult={data} />}
 		</Layout>
 	);

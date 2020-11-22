@@ -128,9 +128,11 @@ type Subscription {
 }
 
 type Team {
+	description: String!
 	id: Float!
+	image: String
+	isPublic: Boolean!
 	name: String!
-	password: String
 	users: [UserToTeam!]!
 }
 
