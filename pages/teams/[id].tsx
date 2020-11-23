@@ -61,7 +61,7 @@ const TeamDetails = () => {
 			</Grid>
 			<Grid item xs={4}>
 				<List dense className={classes.root}>
-					{data.team.users.map(user => {
+					{data?.team.users.map(user => {
 						return (
 							<ListItem key={user.user.id}>
 								<ListItemAvatar>
