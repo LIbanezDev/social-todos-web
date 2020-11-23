@@ -14,27 +14,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }));
 
-export const Upload = ({
-	onChange,
-}: {
-	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) => {
+export const Upload = ({ onChange }: { onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => {
 	const classes = useStyles();
 	return (
 		<>
-			<input
-				type='file'
-				accept='image/*'
-				id='icon-button-file'
-				onChange={onChange}
-				className={classes.input}
-			/>
+			<input type='file' accept='image/*' id='icon-button-file' onChange={onChange} className={classes.input} />
 			<label htmlFor='icon-button-file'>
-				<IconButton
-					color='primary'
-					aria-label='upload picture'
-					component='span'
-				>
+				<IconButton color='primary' aria-label='upload picture' component='span'>
 					<PhotoCamera color='secondary' />
 				</IconButton>
 			</label>

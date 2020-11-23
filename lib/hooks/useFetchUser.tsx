@@ -1,31 +1,27 @@
 import { useEffect, useState } from 'react';
-import {
-	ApolloClient,
-	ApolloQueryResult,
-	NormalizedCacheObject,
-	useApolloClient,
-} from '@apollo/client';
-import { MeDocument, MeQuery } from '../__generated__/GraphQLTypes';
+import { ApolloClient, ApolloQueryResult, NormalizedCacheObject, useApolloClient } from '@apollo/client';
+import { GetUserByIdDocument, GetUserByIdQuery } from '../../__generated__/GraphQLTypes';
 import { useRouter } from 'next/router';
 
 declare global {
 	interface Window {
-		__user: MeQuery;
+		__user: GetUserByIdQuery;
 	}
 }
 
-export async function fetchUser(
-	client: ApolloClient<NormalizedCacheObject>
-): Promise<MeQuery> {
+export async function fetchUser(client: ApolloClient<NormalizedCacheObject>): Promise<GetUserByIdQuery> {
 	if (typeof window !== 'undefined' && window.__user) {
 		return window.__user;
 	}
 
-	const { data }: ApolloQueryResult<MeQuery> = await client.query({
-		query: MeDocument,
+	const { data }: ApolloQueryResult<GetUserByIdQuery> = await client.query({
+		query: GetUserByIdDocument,
+		variables: {
+			id: -1,
+		},
 	});
 
-	if (!data.me) {
+	if (!data.user) {
 		delete window.__user;
 		return null;
 	}
@@ -42,15 +38,11 @@ interface FetchUserProps {
 }
 
 export function useFetchUser({ required }: FetchUserProps) {
-	const [loading, setLoading] = useState<boolean>(
-		() => !(typeof window !== 'undefined' && window.__user)
-	);
+	const [loading, setLoading] = useState<boolean>(() => !(typeof window !== 'undefined' && window.__user));
 	const { replace } = useRouter();
-	const apolloClient = useApolloClient() as ApolloClient<
-		NormalizedCacheObject
-	>;
+	const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
 
-	const [user, setUser] = useState<MeQuery | null>(() => {
+	const [user, setUser] = useState<GetUserByIdQuery | null>(() => {
 		if (typeof window === 'undefined') {
 			return null;
 		}

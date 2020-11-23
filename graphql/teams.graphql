@@ -49,3 +49,14 @@ mutation createTeam($data: CreateTeamInput!) {
 		}
 	}
 }
+
+mutation joinTeam($data: JoinTeamInput!) {
+	joinTeam(data: $data) {
+		ok
+		msg
+		errors {
+			msg
+			path
+		}
+	}
+}

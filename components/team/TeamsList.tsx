@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -6,10 +6,10 @@ import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { CloudDownload, FileCopy } from '@material-ui/icons';
-import green from '@material-ui/core/colors/green';
 import { GetAllTeamsQuery } from '../../__generated__/GraphQLTypes';
-import { Button, Grid } from '@material-ui/core';
+import { Button, Grid, Tooltip } from '@material-ui/core';
 import Link from 'next/link';
+import ConfirmJoinTeamDialog from './ConfirmJoinTeamDialog';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -37,63 +37,110 @@ const useStyles = makeStyles(theme => ({
 	},
 }));
 
-const TeamsList = ({ teamsResult }: { teamsResult: GetAllTeamsQuery }) => {
+interface TeamsListProps {
+	teamsResult: GetAllTeamsQuery;
+	teamsId: string[];
+}
+
+const TeamsList = ({ teamsResult, teamsId }: TeamsListProps) => {
 	const classes = useStyles();
+	const [openDialog, setOpenDialog] = useState<{
+		public: boolean;
+		private: boolean;
+		open: boolean;
+	}>({
+		open: false,
+		public: false,
+		private: false,
+	});
+	const [teamSelected, setTeamSelected] = useState<{
+		id: string;
+		name: string;
+	}>({
+		id: '0',
+		name: '',
+	});
+
+	const handleClickOpen = (teamId: string, teamName: string, dialogType: 'public' | 'private') => {
+		setOpenDialog({
+			open: true,
+			private: false,
+			public: false,
+			[dialogType]: true,
+		});
+		setTeamSelected({
+			id: teamId,
+			name: teamName,
+		});
+	};
+
+	const handleClose = () => {
+		setOpenDialog({
+			open: false,
+			public: false,
+			private: false,
+		});
+	};
 
 	return (
-		<>
-			{teamsResult.teams.map(team => (
-				<Grid item xs={12} sm={4}>
-					<Card className={classes.root} elevation={5}>
-						<div className={classes.details}>
-							<CardContent className={classes.content}>
-								<Link href={`/teams/${team.id}`}>
-									<Button color={'primary'}>
-										<Typography component='h5' variant='h5'>
-											{team.name}
-										</Typography>
-									</Button>
-								</Link>
-								<Typography
-									variant='subtitle1'
-									color='textSecondary'
-								>
-									{team.description}
-								</Typography>
-								<Typography
-									variant='subtitle1'
-									color='textSecondary'
-								>
-									{team.isPublic}
-								</Typography>
-							</CardContent>
-							<div className={classes.controls}>
-								<IconButton aria-label='previous'>
-									<CloudDownload
-										className={classes.playIcon}
-										style={{ color: green[500] }}
-									/>
-								</IconButton>
-								<IconButton aria-label='next'>
-									<FileCopy
-										className={classes.playIcon}
-										color='primary'
-									/>
-								</IconButton>
+		<React.Fragment>
+			<ConfirmJoinTeamDialog
+				open={openDialog.open}
+				handleClose={handleClose}
+				teamSelected={teamSelected}
+				publicTeam={openDialog.public}
+			/>
+			{teamsResult.teams
+				.filter(team => !teamsId.includes(team.id))
+				.map(team => (
+					<Grid item xs={12} sm={4}>
+						<Card className={classes.root} elevation={5}>
+							<div className={classes.details}>
+								<CardContent className={classes.content}>
+									<Link href={`/teams/${team.id}`}>
+										<Button color={'primary'}>
+											<Typography component='h5' variant='h5'>
+												{team.name}
+											</Typography>
+										</Button>
+									</Link>
+									<Typography variant='subtitle1' color='textSecondary'>
+										{team.description}
+									</Typography>
+									<Typography variant='subtitle1' color='textSecondary'>
+										{team.isPublic}
+									</Typography>
+								</CardContent>
+								<div className={classes.controls}>
+									<IconButton aria-label='previous'>
+										<Tooltip
+											title='Join Team'
+											aria-label='add'
+											onClick={() =>
+												handleClickOpen(
+													team.id,
+													team.name,
+													team.isPublic ? 'public' : 'private'
+												)
+											}
+										>
+											<CloudDownload className={classes.playIcon} />
+										</Tooltip>
+									</IconButton>
+									<IconButton aria-label='next'>
+										<FileCopy className={classes.playIcon} color='primary' />
+									</IconButton>
+								</div>
 							</div>
-						</div>
-						<CardMedia
-							className={classes.cover}
-							image={
-								'https://storage.googleapis.com/social_todos/' +
-								team.image
-							}
-							title='Team Image'
-						/>
-					</Card>
-				</Grid>
-			))}
-		</>
+							<CardMedia
+								className={classes.cover}
+								image={'https://storage.googleapis.com/social_todos/' + team.image}
+								title='Team Image'
+							/>
+						</Card>
+					</Grid>
+				))}
+		</React.Fragment>
 	);
 };
 

@@ -31,11 +31,10 @@ const GithubButton: FC<GithubButtonProps> = ({
 			scope,
 			redirect_uri: redirectUri,
 		});
-		const popup = PopupWindow.open(
-			'github-oauth-authorize',
-			`https://github.com/login/oauth/authorize?${search}`,
-			{ height: 800, width: 700 }
-		);
+		const popup = PopupWindow.open('github-oauth-authorize', `https://github.com/login/oauth/authorize?${search}`, {
+			height: 800,
+			width: 700,
+		});
 
 		onRequest();
 		popup.then(
@@ -45,12 +44,7 @@ const GithubButton: FC<GithubButtonProps> = ({
 	};
 
 	return (
-		<Button
-			color='secondary'
-			variant='contained'
-			endIcon={<GitHub />}
-			onClick={onBtnClick}
-		>
+		<Button color='secondary' variant='contained' endIcon={<GitHub />} onClick={onBtnClick}>
 			{children || buttonText}
 		</Button>
 	);

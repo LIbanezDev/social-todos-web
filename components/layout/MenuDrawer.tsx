@@ -15,7 +15,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useStyles } from './menuClasses';
-import { useFetchUser } from '../../hooks/useFetchUser';
+import { useFetchUser } from '../../lib/hooks/useFetchUser';
 import { Typography } from '@material-ui/core';
 import { ExitToApp, Lock } from '@material-ui/icons';
 import Link from 'next/link';
@@ -28,6 +28,7 @@ const MenuDrawer: FC = ({ children }) => {
 	const [open, setOpen] = React.useState(false);
 	const { user, loading } = useFetchUser({ required: false });
 	const { pathname } = useRouter();
+
 	const handleDrawerOpen = () => {
 		setOpen(true);
 	};
@@ -67,10 +68,7 @@ const MenuDrawer: FC = ({ children }) => {
 										aria-label='open drawer'
 										onClick={handleDrawerOpen}
 										edge='start'
-										className={clsx(
-											classes.menuButton,
-											open && classes.hide
-										)}
+										className={clsx(classes.menuButton, open && classes.hide)}
 									>
 										<MenuIcon />
 									</IconButton>
@@ -93,25 +91,15 @@ const MenuDrawer: FC = ({ children }) => {
 			>
 				<div className={classes.drawerHeader}>
 					<IconButton onClick={handleDrawerClose}>
-						{theme.direction === 'ltr' ? (
-							<ChevronLeftIcon />
-						) : (
-							<ChevronRightIcon />
-						)}
+						{theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
 					</IconButton>
 				</div>
 				<Divider />
 				<List>
 					{navRoutes.map(route => (
 						<Link key={route.route} href={route.route}>
-							<ListItem
-								button
-								key={route.route}
-								selected={pathname === route.route}
-							>
-								<ListItemIcon>
-									{route.Icon && <route.Icon />}
-								</ListItemIcon>
+							<ListItem button key={route.route} selected={pathname === route.route}>
+								<ListItemIcon>{route.Icon && <route.Icon />}</ListItemIcon>
 								<ListItemText primary={route.text} />
 							</ListItem>
 						</Link>

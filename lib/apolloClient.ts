@@ -1,10 +1,5 @@
 import { useMemo } from 'react';
-import {
-	ApolloClient,
-	ApolloLink,
-	InMemoryCache,
-	NormalizedCacheObject,
-} from '@apollo/client';
+import { ApolloClient, ApolloLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { createUploadLink } from 'apollo-upload-client';
 import { getConcatenatedSubscriptionsLink } from './subscriptionsLink';
 import { setContext } from '@apollo/client/link/context';
@@ -31,9 +26,7 @@ const authLink = process.browser
 	  })
 	: null;
 
-const authHttpUploadLink = process.browser
-	? authLink.concat(httpUploadLink)
-	: httpUploadLink;
+const authHttpUploadLink = process.browser ? authLink.concat(httpUploadLink) : httpUploadLink;
 
 const link = getConcatenatedSubscriptionsLink(authHttpUploadLink);
 
@@ -47,9 +40,7 @@ export function createApolloClient() {
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | undefined;
 
-export function initializeApollo(
-	initialState: null | object = null
-): ApolloClient<NormalizedCacheObject> {
+export function initializeApollo(initialState: null | object = null): ApolloClient<NormalizedCacheObject> {
 	const _apolloClient = apolloClient ?? createApolloClient();
 
 	// If your page has Next.js data fetching methods that use Apollo Client, the initial state

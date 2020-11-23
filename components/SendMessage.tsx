@@ -1,16 +1,6 @@
 import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
-import {
-	GetChatWithDocument,
-	GetChatWithQuery,
-	useSendMessageMutation,
-} from '../__generated__/GraphQLTypes';
-import {
-	Button,
-	CircularProgress,
-	Grid,
-	TextField,
-	Theme,
-} from '@material-ui/core';
+import { GetChatWithDocument, GetChatWithQuery, useSendMessageMutation } from '../__generated__/GraphQLTypes';
+import { Button, CircularProgress, Grid, TextField, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { Send, InsertEmoticon } from '@material-ui/icons/';
 import { useApolloClient } from '@apollo/client';
@@ -60,9 +50,7 @@ export const SendMessage = ({
 		setOpenEmojis(!openEmojis);
 	};
 
-	const handleSendMessage = async (
-		event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-	) => {
+	const handleSendMessage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		event.preventDefault();
 		setInputValues(prev => ({ ...prev, isSubmiting: true }));
 		const {
@@ -126,13 +114,7 @@ export const SendMessage = ({
 					color='primary'
 					className={classes.button}
 					disabled={inputValues.isSubmitting}
-					endIcon={
-						inputValues.isSubmitting ? (
-							<CircularProgress />
-						) : (
-							<Send />
-						)
-					}
+					endIcon={inputValues.isSubmitting ? <CircularProgress /> : <Send />}
 					onClick={handleSendMessage}
 					type='submit'
 				>

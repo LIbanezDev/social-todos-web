@@ -31,7 +31,7 @@ export type Message = {
 
 export type Team = {
   __typename?: 'Team';
-  id: Scalars['Float'];
+  id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
   image?: Maybe<Scalars['String']>;
@@ -177,6 +177,14 @@ export type CreateTeamInput = {
 };
 
 
+/** Informacion necesaria para unirse a un equipo. */
+export type JoinTeamInput = {
+  /** ID del equipo a ingresar. */
+  id: Scalars['Float'];
+  /** Contraseña del equipo a ingresar, nulo si es publico. */
+  password?: Maybe<Scalars['String']>;
+};
+
 /** Informacion necesaria para crear nuevos usuarios */
 export type UserRegisterInput = {
   name: Scalars['String'];
@@ -210,7 +218,8 @@ export type Query = {
   /** Get One Team by team id param */
   team?: Maybe<Team>;
   myFriendRequests: Array<FriendRequest>;
-  me?: Maybe<User>;
+  /** Get user by id. If you want to see your own info set id = -1 */
+  user?: Maybe<User>;
   users: Array<User>;
 };
 
@@ -235,6 +244,11 @@ export type QueryTeamArgs = {
   id: Scalars['Float'];
 };
 
+
+export type QueryUserArgs = {
+  id: Scalars['Float'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   enviarMensaje: MessageResponse;
@@ -255,7 +269,7 @@ export type MutationEnviarMensajeArgs = {
 
 
 export type MutationJoinTeamArgs = {
-  id: Scalars['Float'];
+  data: JoinTeamInput;
 };
 
 
@@ -386,12 +400,14 @@ export type GetFriendRequestsQuery = (
   )> }
 );
 
-export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetUserByIdQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
 
 
-export type MeQuery = (
+export type GetUserByIdQuery = (
   { __typename?: 'Query' }
-  & { me?: Maybe<(
+  & { user?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name' | 'email' | 'age' | 'description' | 'github' | 'image' | 'google'>
     & { teams: Array<(
@@ -578,6 +594,23 @@ export type CreateTeamMutation = (
   ) }
 );
 
+export type JoinTeamMutationVariables = Exact<{
+  data: JoinTeamInput;
+}>;
+
+
+export type JoinTeamMutation = (
+  { __typename?: 'Mutation' }
+  & { joinTeam: (
+    { __typename?: 'TeamResponse' }
+    & Pick<TeamResponse, 'ok' | 'msg'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'MutationError' }
+      & Pick<MutationError, 'msg' | 'path'>
+    )>> }
+  ) }
+);
+
 export const MutationResponseFragmentDoc = gql`
     fragment MutationResponse on IMutationResponse {
   ok
@@ -735,9 +768,9 @@ export function useGetFriendRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetFriendRequestsQueryHookResult = ReturnType<typeof useGetFriendRequestsQuery>;
 export type GetFriendRequestsLazyQueryHookResult = ReturnType<typeof useGetFriendRequestsLazyQuery>;
 export type GetFriendRequestsQueryResult = Apollo.QueryResult<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>;
-export const MeDocument = gql`
-    query me {
-  me {
+export const GetUserByIdDocument = gql`
+    query getUserById($id: Float!) {
+  user(id: $id) {
     id
     name
     email
@@ -764,37 +797,38 @@ export const MeDocument = gql`
   }
 }
     `;
-export type MeComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<MeQuery, MeQueryVariables>, 'query'>;
+export type GetUserByIdComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetUserByIdQuery, GetUserByIdQueryVariables>, 'query'> & ({ variables: GetUserByIdQueryVariables; skip?: boolean; } | { skip: boolean; });
 
-    export const MeComponent = (props: MeComponentProps) => (
-      <ApolloReactComponents.Query<MeQuery, MeQueryVariables> query={MeDocument} {...props} />
+    export const GetUserByIdComponent = (props: GetUserByIdComponentProps) => (
+      <ApolloReactComponents.Query<GetUserByIdQuery, GetUserByIdQueryVariables> query={GetUserByIdDocument} {...props} />
     );
     
 
 /**
- * __useMeQuery__
+ * __useGetUserByIdQuery__
  *
- * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetUserByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useMeQuery({
+ * const { data, loading, error } = useGetUserByIdQuery({
  *   variables: {
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
-        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+export function useGetUserByIdQuery(baseOptions?: Apollo.QueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
+        return Apollo.useQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, baseOptions);
       }
-export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
-          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+export function useGetUserByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, baseOptions);
         }
-export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
-export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
-export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export type GetUserByIdQueryHookResult = ReturnType<typeof useGetUserByIdQuery>;
+export type GetUserByIdLazyQueryHookResult = ReturnType<typeof useGetUserByIdLazyQuery>;
+export type GetUserByIdQueryResult = Apollo.QueryResult<GetUserByIdQuery, GetUserByIdQueryVariables>;
 export const SocialLoginDocument = gql`
     mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
   loginWithToken(data: {token: $token, type: $type}) {
@@ -1229,3 +1263,46 @@ export function useCreateTeamMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateTeamMutationHookResult = ReturnType<typeof useCreateTeamMutation>;
 export type CreateTeamMutationResult = Apollo.MutationResult<CreateTeamMutation>;
 export type CreateTeamMutationOptions = Apollo.BaseMutationOptions<CreateTeamMutation, CreateTeamMutationVariables>;
+export const JoinTeamDocument = gql`
+    mutation joinTeam($data: JoinTeamInput!) {
+  joinTeam(data: $data) {
+    ok
+    msg
+    errors {
+      msg
+      path
+    }
+  }
+}
+    `;
+export type JoinTeamMutationFn = Apollo.MutationFunction<JoinTeamMutation, JoinTeamMutationVariables>;
+export type JoinTeamComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<JoinTeamMutation, JoinTeamMutationVariables>, 'mutation'>;
+
+    export const JoinTeamComponent = (props: JoinTeamComponentProps) => (
+      <ApolloReactComponents.Mutation<JoinTeamMutation, JoinTeamMutationVariables> mutation={JoinTeamDocument} {...props} />
+    );
+    
+
+/**
+ * __useJoinTeamMutation__
+ *
+ * To run a mutation, you first call `useJoinTeamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinTeamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinTeamMutation, { data, loading, error }] = useJoinTeamMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useJoinTeamMutation(baseOptions?: Apollo.MutationHookOptions<JoinTeamMutation, JoinTeamMutationVariables>) {
+        return Apollo.useMutation<JoinTeamMutation, JoinTeamMutationVariables>(JoinTeamDocument, baseOptions);
+      }
+export type JoinTeamMutationHookResult = ReturnType<typeof useJoinTeamMutation>;
+export type JoinTeamMutationResult = Apollo.MutationResult<JoinTeamMutation>;
+export type JoinTeamMutationOptions = Apollo.BaseMutationOptions<JoinTeamMutation, JoinTeamMutationVariables>;

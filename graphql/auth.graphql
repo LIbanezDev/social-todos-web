@@ -39,8 +39,8 @@ query getFriendRequests {
 	}
 }
 
-query me {
-	me {
+query getUserById($id: Float!) {
+	user(id: $id) {
 		id
 		name
 		email

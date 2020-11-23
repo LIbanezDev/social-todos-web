@@ -1,22 +1,9 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import {
-	Avatar,
-	CircularProgress,
-	List,
-	ListItem,
-	ListItemIcon,
-	ListItemText,
-	Paper,
-	Theme,
-} from '@material-ui/core';
+import { Avatar, CircularProgress, List, ListItem, ListItemIcon, ListItemText, Paper, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import {
-	GetChatWithDocument,
-	GetChatWithQuery,
-	useGetUsersQuery,
-} from '../__generated__/GraphQLTypes';
+import { GetChatWithDocument, GetChatWithQuery, useGetUsersQuery } from '../__generated__/GraphQLTypes';
 import { ApolloQueryResult, useApolloClient } from '@apollo/client';
-import { useFetchUser } from '../hooks/useFetchUser';
+import { useFetchUser } from '../lib/hooks/useFetchUser';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	root: {
@@ -50,10 +37,7 @@ const Users = ({
 		setMessages(data);
 	};
 
-	const handleChangeChatClick = async (
-		event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-		id: string
-	) => {
+	const handleChangeChatClick = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => {
 		await setChat(parseInt(id));
 		setSelectedUser(id);
 	};
@@ -65,7 +49,7 @@ const Users = ({
 			) : (
 				<List component='nav' aria-label='main mailbox folders'>
 					{users.users.map(u => {
-						if (u.id !== user.me.id) {
+						if (u.id !== user.user.id) {
 							return (
 								<ListItem
 									button
@@ -81,8 +65,7 @@ const Users = ({
 											src={
 												!u.image
 													? 'https://storage.googleapis.com/social_todos/users/default-graph.png'
-													: u.image.slice(0, 8) ===
-													  'https://'
+													: u.image.slice(0, 8) === 'https://'
 													? u.image
 													: `https://storage.googleapis.com/social_todos/${u.image}`
 											}

@@ -1,31 +1,26 @@
-import { Group, Home, Person, WhatsApp } from '@material-ui/icons';
+import { Group, Home, WhatsApp } from '@material-ui/icons';
 import { FC } from 'react';
 
 interface Route {
-	text: string,
-	route: string,
-	Icon?: FC
+	text: string;
+	route: string;
+	Icon?: FC;
 }
 
 export const navRoutes: Array<Route> = [
 	{
 		Icon: Home,
 		route: '/',
-		text: "Inicio"
-	},
-	{
-		Icon: Person,
-		route: "/profile",
-		text: "Mi Perfil",
+		text: 'Inicio',
 	},
 	{
 		Icon: Group,
-		route: "/teams",
-		text: "Equipos"
+		route: '/teams',
+		text: 'Equipos',
 	},
 	{
 		Icon: WhatsApp,
-		route: "/chat",
-		text: "Mi Chat"
+		route: '/chat',
+		text: 'Mi Chat',
 	},
-]
+];

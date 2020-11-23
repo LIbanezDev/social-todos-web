@@ -9,24 +9,14 @@ export default class MyDocument extends Document {
 			<Html lang='es'>
 				<Head>
 					<meta name='theme-color' content={theme.primary.main} />
-					<meta
-						httpEquiv='Content-Type'
-						content='text/html; charset=utf-8'
-					/>
-					<meta
-						httpEquiv='Content-Type'
-						content='text/html; charset=ISO-8859-1'
-					/>
+					<meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
+					<meta httpEquiv='Content-Type' content='text/html; charset=ISO-8859-1' />
 					<meta charSet='utf-8' />
 					<link
 						rel='stylesheet'
 						href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css'
 					/>
-					<link
-						rel='icon'
-						type='image/png'
-						href={'/social_todos.svg'}
-					/>
+					<link rel='icon' type='image/png' href={'/social_todos.svg'} />
 				</Head>
 				<body>
 					<Main />
@@ -76,9 +66,6 @@ MyDocument.getInitialProps = async ctx => {
 	return {
 		...initialProps,
 		// Styles fragment is rendered after the app and page rendering finish.
-		styles: [
-			...React.Children.toArray(initialProps.styles),
-			sheets.getStyleElement(),
-		],
+		styles: [...React.Children.toArray(initialProps.styles), sheets.getStyleElement()],
 	};
 };

@@ -14,12 +14,7 @@ const CheckBox = (props: MyCheckboxProps) => {
 		type: 'checkbox',
 		value: props.value,
 	});
-	return (
-		<FormControlLabel
-			control={<Checkbox {...props} {...field} />}
-			label={props.label}
-		/>
-	);
+	return <FormControlLabel control={<Checkbox {...props} {...field} />} label={props.label} />;
 };
 
 export default CheckBox;

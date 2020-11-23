@@ -96,7 +96,7 @@ type Mutation {
 	answerFriendRequest(accept: Boolean!, requestId: Float!): Boolean!
 	createTeam(data: CreateTeamInput!): TeamResponse!
 	enviarMensaje(message: String!, to: Float!): MessageResponse!
-	joinTeam("Team ID" id: Float!): TeamResponse!
+	joinTeam(data: JoinTeamInput!): TeamResponse!
 	login(email: String!, password: String!): LoginResponse!
 	loginWithToken(data: SocialRegisterInput!): LoginResponse!
 	register(data: UserRegisterInput!): UserResponse!
@@ -109,7 +109,6 @@ type MutationError {
 }
 
 type Query {
-	me: User
 	myChat(with: Int!): [Message!]!
 	myFriendRequests: [FriendRequest!]!
 	"Search gifs"
@@ -120,6 +119,8 @@ type Query {
 	teams: [Team!]!
 	"Trending giphpys"
 	trendingGifs(limit: Float = 25.0, offset: Float = 0.0): [Giphy!]
+	"Get user by id. If you want to see your own info set id = -1"
+	user(id: Float!): User
 	users: [User!]!
 }
 
@@ -129,7 +130,7 @@ type Subscription {
 
 type Team {
 	description: String!
-	id: Float!
+	id: ID!
 	image: String
 	isPublic: Boolean!
 	name: String!
@@ -185,6 +186,14 @@ input CreateTeamInput {
 	"Team Name"
 	name: String!
 	"Team optional password"
+	password: String
+}
+
+"Informacion necesaria para unirse a un equipo."
+input JoinTeamInput {
+	"ID del equipo a ingresar."
+	id: Float!
+	"Contraseña del equipo a ingresar, nulo si es publico."
 	password: String
 }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Grid, Paper, Typography } from '@material-ui/core';
 import { GetChatWithQuery } from '../__generated__/GraphQLTypes';
-import { useFetchUser } from '../hooks/useFetchUser';
+import { useFetchUser } from '../lib/hooks/useFetchUser';
 
 const Messages = ({ messages }: { messages: GetChatWithQuery | null }) => {
 	const { user } = useFetchUser({ required: true });
@@ -11,15 +11,7 @@ const Messages = ({ messages }: { messages: GetChatWithQuery | null }) => {
 				<Typography variant='body2'> Selecciona un chat </Typography>
 			) : (
 				messages.myChat.map(msg => (
-					<Grid
-						container
-						key={msg.date}
-						justify={
-							msg.sender.id === user.me.id
-								? 'flex-end'
-								: 'flex-start'
-						}
-					>
+					<Grid container key={msg.date} justify={msg.sender.id === user.user.id ? 'flex-end' : 'flex-start'}>
 						<Grid item xs={3}>
 							<Typography>
 								<Avatar
@@ -27,12 +19,10 @@ const Messages = ({ messages }: { messages: GetChatWithQuery | null }) => {
 									src={
 										!msg.sender.image
 											? 'https://storage.googleapis.com/social_todos/users/default-graph.png'
-											: msg.sender.image.slice(0, 8) ===
-											  'https://'
+											: msg.sender.image.slice(0, 8) === 'https://'
 											? msg.sender.image
 											: `https://storage.googleapis.com/social_todos/${
-													msg.sender.image ||
-													'users/default-avatar.jpg'
+													msg.sender.image || 'users/default-avatar.jpg'
 											  }`
 									}
 								/>

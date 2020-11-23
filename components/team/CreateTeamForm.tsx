@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { Box, Button, FormGroup, TextField } from '@material-ui/core';
 import CheckBox from '../auth/CheckBox';
-import {
-	CreateTeamInput,
-	GetAllTeamsDocument,
-	GetAllTeamsQuery,
-	useCreateTeamMutation,
-} from '../../__generated__/GraphQLTypes';
+import { CreateTeamInput, useCreateTeamMutation } from '../../__generated__/GraphQLTypes';
 import { Upload } from '../auth/FileUpload';
 import { useSnackbar } from 'notistack';
-import { useApolloClient } from '@apollo/client';
+import { useRouter } from 'next/router';
 
 export type FileState = {
 	file: File;
@@ -34,7 +29,8 @@ const CreateTeamForm = () => {
 		file: null,
 	});
 	const { enqueueSnackbar } = useSnackbar();
-	const { cache } = useApolloClient();
+	const { replace } = useRouter();
+
 	const onFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const photo = event.target.files[0];
 		setSelectedFile({
@@ -43,10 +39,7 @@ const CreateTeamForm = () => {
 		});
 	};
 
-	const handleCreateTeam = async (
-		values: CreateTeamInputs,
-		formikHelpers: FormikHelpers<CreateTeamInputs>
-	) => {
+	const handleCreateTeam = async (values: CreateTeamInputs, formikHelpers: FormikHelpers<CreateTeamInputs>) => {
 		try {
 			const { data, errors } = await createTeam({
 				variables: {
@@ -54,31 +47,16 @@ const CreateTeamForm = () => {
 						name: values.name,
 						description: values.description,
 						image: selectedFile.file,
-						password:
-							values.password !== '' ? values.password : null,
+						password: values.password !== '' ? values.password : null,
 					},
 				},
 			});
 			if (errors) {
-				return enqueueSnackbar(
-					'Hubo un error al crear el equipo, intente mas tarde',
-					{
-						variant: 'error',
-					}
-				);
+				return enqueueSnackbar('Hubo un error al crear el equipo, intente mas tarde', {
+					variant: 'error',
+				});
 			}
-
-			// Updating cache...
-			const cachedTeams: GetAllTeamsQuery = cache.readQuery({
-				query: GetAllTeamsDocument,
-			});
-			cache.writeQuery({
-				query: GetAllTeamsDocument,
-				data: {
-					teams: [...cachedTeams.teams, data.createTeam.team],
-				},
-			});
-
+			await replace('/teams/' + data.createTeam.team.id);
 			enqueueSnackbar(data.createTeam.msg, {
 				variant: data.createTeam.ok ? 'success' : 'error',
 			});
@@ -87,12 +65,9 @@ const CreateTeamForm = () => {
 			});
 			formikHelpers.resetForm();
 		} catch (e: unknown) {
-			enqueueSnackbar(
-				'Hubo un error al crear el equipo, intente mas tarde',
-				{
-					variant: 'error',
-				}
-			);
+			enqueueSnackbar('Hubo un error al crear el equipo, intente mas tarde', {
+				variant: 'error',
+			});
 		}
 	};
 	return (
@@ -101,33 +76,18 @@ const CreateTeamForm = () => {
 				<Form autoComplete='off'>
 					<Box marginBottom={2}>
 						<FormGroup>
-							<Field
-								name='name'
-								type='text'
-								as={TextField}
-								label='Team Name'
-							/>
+							<Field name='name' type='text' as={TextField} label='Team Name' />
 						</FormGroup>
 					</Box>
 					<Box marginBottom={2}>
 						<FormGroup>
-							<Field
-								name='description'
-								type='text'
-								as={TextField}
-								label='Description'
-							/>
+							<Field name='description' type='text' as={TextField} label='Description' />
 						</FormGroup>
 					</Box>
 					{props.values.isPrivate && (
 						<Box marginBottom={2}>
 							<FormGroup>
-								<Field
-									name='password'
-									type='text'
-									as={TextField}
-									label='Contraseña'
-								/>
+								<Field name='password' type='text' as={TextField} label='Contraseña' />
 							</FormGroup>
 						</Box>
 					)}
@@ -140,18 +100,10 @@ const CreateTeamForm = () => {
 						<Upload onChange={onFileChange} />
 					</Box>
 					{selectedFile.preview && (
-						<img
-							src={selectedFile.preview}
-							style={{ height: '200px' }}
-							alt='Team Preview'
-						/>
+						<img src={selectedFile.preview} style={{ height: '200px' }} alt='Team Preview' />
 					)}
 					<Box marginBottom={2}>
-						<Button
-							variant='contained'
-							color='primary'
-							type='submit'
-						>
+						<Button variant='contained' color='primary' type='submit'>
 							Create Team
 						</Button>
 					</Box>

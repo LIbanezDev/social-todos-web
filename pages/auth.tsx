@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../components/layout/Layout';
-import { useFetchUser } from '../hooks/useFetchUser';
+import { useFetchUser } from '../lib/hooks/useFetchUser';
 import { useRouter } from 'next/router';
 import { CircularProgress, Grid } from '@material-ui/core';
 import Register from '../components/auth/Register';

@@ -1,22 +1,11 @@
 import React, { useState } from 'react';
 import { Field, Form, Formik } from 'formik';
-import {
-	Box,
-	Card,
-	CardContent,
-	FormGroup,
-	TextField,
-	Typography,
-	Button,
-} from '@material-ui/core';
+import { Box, Card, CardContent, FormGroup, TextField, Typography, Button } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Upload } from './FileUpload';
 import { useRegisterMutation } from '../../__generated__/GraphQLTypes';
-import {
-	KeyboardDatePicker,
-	MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import esLocale from 'date-fns/locale/es';
 
@@ -70,38 +59,21 @@ const Register = () => {
 							<Form autoComplete='off'>
 								<Box marginBottom={2}>
 									<FormGroup>
-										<Field
-											name='name'
-											type='text'
-											as={TextField}
-											label='Name'
-										/>
+										<Field name='name' type='text' as={TextField} label='Name' />
 									</FormGroup>
 								</Box>
 								<Box marginBottom={2}>
 									<FormGroup>
-										<Field
-											name='email'
-											as={TextField}
-											label='Email'
-										/>
+										<Field name='email' as={TextField} label='Email' />
 									</FormGroup>
 								</Box>
 								<Box marginBottom={2}>
 									<FormGroup>
-										<Field
-											name='password'
-											type='password'
-											as={TextField}
-											label='Password'
-										/>
+										<Field name='password' type='password' as={TextField} label='Password' />
 									</FormGroup>
 								</Box>
 								<Box marginBottom={2}>
-									<MuiPickersUtilsProvider
-										utils={DateFnsUtils}
-										locale={esLocale}
-									>
+									<MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
 										<KeyboardDatePicker
 											id='date-picker-dialog'
 											label='Fecha de nacimiento'
@@ -109,14 +81,8 @@ const Register = () => {
 											variant='inline'
 											format='dd/MM/yyyy'
 											value={props.values.bornDate}
-											onChange={(
-												date: Date,
-												value: string
-											) =>
-												props.setFieldValue(
-													'bornDate',
-													value
-												)
+											onChange={(date: Date, value: string) =>
+												props.setFieldValue('bornDate', value)
 											}
 											KeyboardButtonProps={{
 												'aria-label': 'change date',
@@ -124,23 +90,13 @@ const Register = () => {
 										/>
 									</MuiPickersUtilsProvider>
 								</Box>
-								{selectedFile && (
-									<img
-										src={imageSrc}
-										style={{ height: '200px' }}
-										alt='Preview Image'
-									/>
-								)}
+								{selectedFile && <img src={imageSrc} style={{ height: '200px' }} alt='Preview Image' />}
 								<Box marginBottom={2}>
 									<Upload onChange={onFileChange} />
 								</Box>
 								<br />
 								<Button
-									startIcon={
-										props.isSubmitting ? (
-											<CircularProgress size={24} />
-										) : null
-									}
+									startIcon={props.isSubmitting ? <CircularProgress size={24} /> : null}
 									variant='contained'
 									color='primary'
 									disabled={props.isSubmitting}

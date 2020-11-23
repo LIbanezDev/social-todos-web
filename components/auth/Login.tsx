@@ -1,22 +1,10 @@
 import React from 'react';
-import {
-	Box,
-	Button,
-	Card,
-	CardContent,
-	FormGroup,
-	TextField,
-	Typography,
-} from '@material-ui/core';
+import { Box, Button, Card, CardContent, FormGroup, TextField, Typography } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useSnackbar } from 'notistack';
 import GoogleButton from './GoogleButton';
-import {
-	External_Auth_Apps,
-	useLoginMutation,
-	useSocialLoginMutation,
-} from '../../__generated__/GraphQLTypes';
+import { External_Auth_Apps, useLoginMutation, useSocialLoginMutation } from '../../__generated__/GraphQLTypes';
 import GithubButton from './GithubButton';
 
 const initialValues = {
@@ -38,15 +26,11 @@ const Login = () => {
 		});
 
 		if (errors)
-			return enqueueSnackbar(
-				'Hubo un error con la peticion, intente mas tarde.',
-				{
-					variant: 'error',
-				}
-			);
+			return enqueueSnackbar('Hubo un error con la peticion, intente mas tarde.', {
+				variant: 'error',
+			});
 
-		if (data.loginWithToken.ok)
-			localStorage.setItem('token', data.loginWithToken.token);
+		if (data.loginWithToken.ok) localStorage.setItem('token', data.loginWithToken.token);
 
 		enqueueSnackbar(data.loginWithToken.msg, {
 			variant: data.loginWithToken.ok ? 'success' : 'error',
@@ -73,12 +57,9 @@ const Login = () => {
 								});
 
 								if (res.ok) {
-									enqueueSnackbar(
-										'Bienvenido a la aplicación!',
-										{
-											variant: 'success',
-										}
-									);
+									enqueueSnackbar('Bienvenido a la aplicación!', {
+										variant: 'success',
+									});
 									localStorage.setItem('token', res.token);
 									window.location.href = '/';
 								} else {
@@ -92,21 +73,12 @@ const Login = () => {
 								<Form autoComplete='off'>
 									<Box marginBottom={2}>
 										<FormGroup>
-											<Field
-												name='email'
-												as={TextField}
-												label='Email'
-											/>
+											<Field name='email' as={TextField} label='Email' />
 										</FormGroup>
 									</Box>
 									<Box marginBottom={2}>
 										<FormGroup>
-											<Field
-												name='pass'
-												type='password'
-												as={TextField}
-												label='Password'
-											/>
+											<Field name='pass' type='password' as={TextField} label='Password' />
 										</FormGroup>
 									</Box>
 									<Box marginBottom={2}>
@@ -114,13 +86,7 @@ const Login = () => {
 											variant='contained'
 											type='submit'
 											color='primary'
-											startIcon={
-												isSubmitting ? (
-													<CircularProgress
-														size={24}
-													/>
-												) : null
-											}
+											startIcon={isSubmitting ? <CircularProgress size={24} /> : null}
 											disabled={isSubmitting}
 										>
 											Login

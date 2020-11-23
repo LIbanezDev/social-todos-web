@@ -14,10 +14,7 @@ export const updateCache = (
 	cache: ApolloCache<object>,
 	data: SubToAllSubscription,
 	setMessages: React.Dispatch<React.SetStateAction<GetChatWithQuery>>,
-	enqueueSnackbar: (
-		message: SnackbarMessage,
-		options?: OptionsObject
-	) => SnackbarKey,
+	enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey,
 	currentChat: string | null
 ) => {
 	try {
@@ -53,16 +50,11 @@ export const updateCache = (
 			const queryConfig = {
 				query: GetFriendRequestsDocument,
 			};
-			const cacheData: GetFriendRequestsQuery = cache.readQuery(
-				queryConfig
-			);
+			const cacheData: GetFriendRequestsQuery = cache.readQuery(queryConfig);
 			cache.writeQuery({
 				...queryConfig,
 				data: {
-					myFriendRequests: [
-						...cacheData.myFriendRequests,
-						data.waitNotifications,
-					],
+					myFriendRequests: [...cacheData.myFriendRequests, data.waitNotifications],
 				},
 			});
 		}

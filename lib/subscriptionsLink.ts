@@ -4,9 +4,7 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import { ApolloLink, split } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 
-export const getConcatenatedSubscriptionsLink = (
-	authHttpLink: ApolloLink
-): ApolloLink => {
+export const getConcatenatedSubscriptionsLink = (authHttpLink: ApolloLink): ApolloLink => {
 	if (process.browser) {
 		if (localStorage.getItem('token')) {
 			const wsLink = new WebSocketLink({
@@ -24,10 +22,7 @@ export const getConcatenatedSubscriptionsLink = (
 			return split(
 				({ query }) => {
 					const definition = getMainDefinition(query);
-					return (
-						definition.kind === 'OperationDefinition' &&
-						definition.operation === 'subscription'
-					);
+					return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
 				},
 				wsLink,
 				authHttpLink
