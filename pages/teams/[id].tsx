@@ -1,8 +1,6 @@
 import React from 'react';
 import Layout from '../../components/layout/Layout';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { initializeApollo } from '../../lib/apolloClient';
-import { GetTeamByIdDocument, GetTeamsIdsDocument, useGetTeamByIdQuery } from '../../__generated__/GraphQLTypes';
+import { useGetTeamByIdQuery } from '../../__generated__/GraphQLTypes';
 import { useRouter } from 'next/router';
 import { useFetchUser } from '../../lib/hooks/useFetchUser';
 import {
@@ -75,7 +73,7 @@ const TeamDetails = () => {
 								</ListItemAvatar>
 								<ListItemText id={user.user.id} primary={user.user.name} />
 								<ListItemSecondaryAction>
-									<IconButton/>
+									<IconButton />
 								</ListItemSecondaryAction>
 							</ListItem>
 						);
@@ -84,36 +82,6 @@ const TeamDetails = () => {
 			</Grid>
 		</Layout>
 	);
-};
-
-export const getStaticProps: GetStaticProps = async ctx => {
-	const apolloClient = initializeApollo();
-	await apolloClient.query({
-		query: GetTeamByIdDocument,
-		variables: {
-			id: parseInt(ctx.params.id as string),
-		},
-	});
-	return {
-		props: {
-			initialApolloState: apolloClient.cache.extract(),
-		},
-		revalidate: 1,
-	};
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-	const apolloClient = initializeApollo();
-	const { data } = await apolloClient.query({
-		query: GetTeamsIdsDocument,
-	});
-	const paths = data.teams.map(team => ({
-		params: { id: team.id.toString() },
-	}));
-	return {
-		paths,
-		fallback: true,
-	};
 };
 
 export default TeamDetails;

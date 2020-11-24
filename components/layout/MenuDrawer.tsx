@@ -17,7 +17,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { useStyles } from './menuClasses';
 import { useFetchUser } from '../../lib/hooks/useFetchUser';
 import { Typography } from '@material-ui/core';
-import { ExitToApp, Lock } from '@material-ui/icons';
+import { ExitToApp, Lock, AccountCircle } from '@material-ui/icons';
 import Link from 'next/link';
 import { navRoutes } from './pageRoutes';
 import { useRouter } from 'next/router';
@@ -96,9 +96,17 @@ const MenuDrawer: FC = ({ children }) => {
 				</div>
 				<Divider />
 				<List>
+					{user && (
+						<Link href={'/users/' + user.user.id}>
+							<ListItem button selected={pathname === '/users/' + user.user.id}>
+								<ListItemIcon>{<AccountCircle />}</ListItemIcon>
+								<ListItemText primary={'Mi Perfil'} />
+							</ListItem>
+						</Link>
+					)}
 					{navRoutes.map(route => (
 						<Link key={route.route} href={route.route}>
-							<ListItem button key={route.route} selected={pathname === route.route}>
+							<ListItem button selected={pathname === route.route}>
 								<ListItemIcon>{route.Icon && <route.Icon />}</ListItemIcon>
 								<ListItemText primary={route.text} />
 							</ListItem>

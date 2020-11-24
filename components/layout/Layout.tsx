@@ -34,9 +34,7 @@ const Layout: React.FC<Props> = ({ children, title = 'Social Todos', setMessages
 				<meta name='description' content={description} />
 			</Head>
 			<MenuDrawer>
-				<Grid container justify='center'>
-					{children}
-				</Grid>
+				<Grid container>{children}</Grid>
 			</MenuDrawer>
 			<footer>
 				<hr />
