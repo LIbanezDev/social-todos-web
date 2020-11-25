@@ -76,18 +76,18 @@ const CreateTeamForm = () => {
 				<Form autoComplete='off'>
 					<Box marginBottom={2}>
 						<FormGroup>
-							<Field name='name' type='text' as={TextField} label='Team Name' />
+							<Field name='name' type='text' as={TextField} label='Nombre de equipo' />
 						</FormGroup>
 					</Box>
 					<Box marginBottom={2}>
 						<FormGroup>
-							<Field name='description' type='text' as={TextField} label='Description' />
+							<Field name='description' type='text' as={TextField} label='Breve descripcion' />
 						</FormGroup>
 					</Box>
 					{props.values.isPrivate && (
 						<Box marginBottom={2}>
 							<FormGroup>
-								<Field name='password' type='text' as={TextField} label='Contraseña' />
+								<Field name='password' type='password' as={TextField} label='Contraseña' />
 							</FormGroup>
 						</Box>
 					)}

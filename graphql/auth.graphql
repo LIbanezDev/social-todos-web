@@ -39,34 +39,6 @@ query getFriendRequests {
 	}
 }
 
-query getUserById($id: Float!) {
-	user(id: $id) {
-		id
-		name
-		email
-		age
-		description
-		github
-		image
-		google
-		teams {
-			userIsAdmin
-			team {
-				id
-				name
-			}
-		}
-		friends {
-			id
-			name
-			email
-			image
-			github
-			google
-		}
-	}
-}
-
 mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
 	loginWithToken(data: { token: $token, type: $type }) {
 		...MutationResponse

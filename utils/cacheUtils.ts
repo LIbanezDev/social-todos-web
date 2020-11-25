@@ -1,8 +1,8 @@
 import {
 	GetChatWithDocument,
 	GetChatWithQuery,
-	GetFriendRequestsDocument,
-	GetFriendRequestsQuery,
+	GetMyPendientFriendRequestsDocument,
+	GetMyPendientFriendRequestsQuery,
 	Message,
 	SubToAllSubscription,
 } from '../__generated__/GraphQLTypes';
@@ -48,13 +48,17 @@ export const updateCache = (
 
 		if (data.waitNotifications.__typename === 'FriendRequest') {
 			const queryConfig = {
-				query: GetFriendRequestsDocument,
+				query: GetMyPendientFriendRequestsDocument,
 			};
-			const cacheData: GetFriendRequestsQuery = cache.readQuery(queryConfig);
+			console.log(data.waitNotifications);
+			enqueueSnackbar(`Tienes una nueva solicitud de amistad de: ${data.waitNotifications.sender.name}!`, {
+				variant: 'success',
+			});
+			const cacheData: GetMyPendientFriendRequestsQuery = cache.readQuery(queryConfig);
 			cache.writeQuery({
 				...queryConfig,
 				data: {
-					myFriendRequests: [...cacheData.myFriendRequests, data.waitNotifications],
+					myFriendRequests: [...cacheData.myPendientFriendRequests, data.waitNotifications],
 				},
 			});
 		}

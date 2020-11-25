@@ -71,7 +71,7 @@ const ConfirmJoinTeamDialog = ({ open, handleClose, teamSelected, publicTeam }: 
 			<DialogContent>
 				<DialogContentText id='alert-dialog-description'>
 					{publicTeam ? (
-						<Typography variant='body2'>Unirse al equipo publico. ${teamSelected.name}</Typography>
+						<Typography variant='body2'>Unirse al equipo publico {teamSelected.name}</Typography>
 					) : (
 						<>
 							<Typography variant='body1' style={{ marginBottom: 18 }}>

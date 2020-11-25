@@ -1,4 +1,4 @@
-import { Group, Home, WhatsApp } from '@material-ui/icons';
+import { Group, Home, WhatsApp, PersonAdd } from '@material-ui/icons';
 import { FC } from 'react';
 
 interface Route {
@@ -12,6 +12,11 @@ export const navRoutes: Array<Route> = [
 		Icon: Home,
 		route: '/',
 		text: 'Inicio',
+	},
+	{
+		Icon: PersonAdd,
+		route: '/users',
+		text: 'Usuarios',
 	},
 	{
 		Icon: Group,

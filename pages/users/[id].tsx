@@ -1,9 +1,9 @@
 import React from 'react';
 import Layout from '../../components/layout/Layout';
 import { useRouter } from 'next/router';
-import { useGetUserByIdQuery } from '../../__generated__/GraphQLTypes';
+import { useGetMyReceivedFriendRequestsQuery, useGetUserByIdQuery } from '../../__generated__/GraphQLTypes';
 import { useFetchUser } from '../../lib/hooks/useFetchUser';
-import { CircularProgress, Grid, Typography } from '@material-ui/core';
+import { Avatar, Button, CircularProgress, Grid, Typography } from '@material-ui/core';
 import Image from 'next/image';
 import { GitHub } from '@material-ui/icons';
 import { getUserImageURL } from '../../utils/userImage';
@@ -50,25 +50,27 @@ function a11yProps(index) {
 const useStyles = makeStyles(theme => ({
 	root: {
 		backgroundColor: theme.palette.background.paper,
-		flexGrow: 1,
 	},
 }));
 
 const Profile = () => {
+	const classes = useStyles();
 	const { query } = useRouter();
 	const userLoading = useFetchUser({ required: true });
-	const classes = useStyles();
+	const { data: pendientFR, loading: loadingFRS } = useGetMyReceivedFriendRequestsQuery();
 	const [value, setValue] = React.useState(0);
-	const handleChange = (event, newValue) => {
-		setValue(newValue);
-	};
 	const { data, loading } = useGetUserByIdQuery({
 		variables: {
 			id: parseInt(query.id as string),
 		},
 	});
+
+	const handleChange = (event, newValue) => {
+		setValue(newValue);
+	};
+
 	return (
-		<Layout {...userLoading} title={'Social Todos - Mi Perfil'} description='Mi perfil de social todos'>
+		<Layout {...userLoading} title={'Social Todos - ' + data?.user.name} description='Mi perfil de social todos'>
 			{loading && userLoading.loading ? (
 				<CircularProgress />
 			) : (
@@ -87,10 +89,14 @@ const Profile = () => {
 									<Tab label='Mi Información' {...a11yProps(0)} />
 									<Tab label='Equipos' {...a11yProps(1)} />
 									<Tab label='Amigos' {...a11yProps(2)} />
+									{userLoading.user?.user.id === data.user.id && !loadingFRS && (
+										<Tab label='Solicitudes de Amistad' {...a11yProps(3)} />
+									)}
 								</Tabs>
 							</AppBar>
-							<Grid container>
-								<TabPanel value={value} index={0}>
+
+							<TabPanel value={value} index={0}>
+								<Grid container className='animate__animated animate__fadeIn'>
 									<Grid item xs={12} sm={4}>
 										<Image
 											src={getUserImageURL(data?.user.image)}
@@ -109,20 +115,56 @@ const Profile = () => {
 										</Typography>
 									</Grid>
 									<Grid item xs={12} sm={4}>
-										<pre style={{ fontSize: '2rem' }}>{JSON.stringify(data, null, 4)}</pre>
+										<Typography variant='body1'>{JSON.stringify(data?.user)}</Typography>
 									</Grid>
-								</TabPanel>
-								<TabPanel value={value} index={1}>
+								</Grid>
+							</TabPanel>
+							<TabPanel value={value} index={1}>
+								<Grid container className='animate__animated animate__fadeIn'>
 									<Grid item xs={12} sm={4}>
-										{JSON.stringify(data?.user.teams)}
+										<Typography variant='body1'>{JSON.stringify(data?.user.teams)}</Typography>
 									</Grid>
-								</TabPanel>
-								<TabPanel value={value} index={2}>
+								</Grid>
+							</TabPanel>
+							<TabPanel value={value} index={2}>
+								<Grid container className='animate__animated animate__fadeIn'>
 									<Grid item xs={12} sm={4}>
-										{JSON.stringify(data?.user.friends)}
+										<Typography variant='body1'>{JSON.stringify(data?.user.friends)}</Typography>
+									</Grid>
+									<Grid item xs={12} sm={4}>
+										<Typography variant='body1'>Something</Typography>
+									</Grid>
+								</Grid>
+							</TabPanel>
+							{userLoading.user?.user.id === data.user.id && !loadingFRS && (
+								<TabPanel value={value} index={3}>
+									<Grid container className='animate__animated animate__fadeIn'>
+										<Grid container>
+											<Grid item xs={12}>
+												<Typography variant={'h5'}> Solicitudes de amistad </Typography>
+											</Grid>
+										</Grid>
+										<Grid container>
+											<Grid item xs={12}>
+												{pendientFR.myFriendRequests.map(fr => (
+													<>
+														<Avatar src={getUserImageURL(fr.sender.image)} />
+														<Typography variant='body1'>{fr.sender.name}</Typography>
+														<Button variant='contained' color='primary'>
+															{' '}
+															Aceptar{' '}
+														</Button>
+														<Button variant='contained' color='secondary'>
+															{' '}
+															Rechazar{' '}
+														</Button>
+													</>
+												))}
+											</Grid>
+										</Grid>
 									</Grid>
 								</TabPanel>
-							</Grid>
+							)}
 						</>
 					)}
 				</div>

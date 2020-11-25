@@ -111,6 +111,7 @@ type MutationError {
 type Query {
 	myChat(with: Int!): [Message!]!
 	myFriendRequests: [FriendRequest!]!
+	myPendientFriendRequests: [FriendRequest!]!
 	"Search gifs"
 	searchGifs(query: String!): [Giphy!]
 	"Get One Team by team id param"

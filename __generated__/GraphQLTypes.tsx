@@ -218,6 +218,7 @@ export type Query = {
   /** Get One Team by team id param */
   team?: Maybe<Team>;
   myFriendRequests: Array<FriendRequest>;
+  myPendientFriendRequests: Array<FriendRequest>;
   /** Get user by id. If you want to see your own info set id = -1 */
   user?: Maybe<User>;
   users: Array<User>;
@@ -397,30 +398,6 @@ export type GetFriendRequestsQuery = (
       { __typename?: 'User' }
       & Pick<User, 'name' | 'image'>
     ) }
-  )> }
-);
-
-export type GetUserByIdQueryVariables = Exact<{
-  id: Scalars['Float'];
-}>;
-
-
-export type GetUserByIdQuery = (
-  { __typename?: 'Query' }
-  & { user?: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email' | 'age' | 'description' | 'github' | 'image' | 'google'>
-    & { teams: Array<(
-      { __typename?: 'UserToTeam' }
-      & Pick<UserToTeam, 'userIsAdmin'>
-      & { team: (
-        { __typename?: 'Team' }
-        & Pick<Team, 'id' | 'name'>
-      ) }
-    )>, friends: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'email' | 'image' | 'github' | 'google'>
-    )> }
   )> }
 );
 
@@ -611,6 +588,87 @@ export type JoinTeamMutation = (
   ) }
 );
 
+export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllUsersQuery = (
+  { __typename?: 'Query' }
+  & { users: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'image' | 'description' | 'github' | 'google'>
+  )> }
+);
+
+export type GetMyPendientFriendRequestsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyPendientFriendRequestsQuery = (
+  { __typename?: 'Query' }
+  & { myPendientFriendRequests: Array<(
+    { __typename?: 'FriendRequest' }
+    & { receiver: (
+      { __typename?: 'User' }
+      & Pick<User, 'id'>
+    ) }
+  )> }
+);
+
+export type GetMyReceivedFriendRequestsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyReceivedFriendRequestsQuery = (
+  { __typename?: 'Query' }
+  & { myFriendRequests: Array<(
+    { __typename?: 'FriendRequest' }
+    & Pick<FriendRequest, 'id'>
+    & { sender: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'image'>
+    ) }
+  )> }
+);
+
+export type SendFriendRequestMutationVariables = Exact<{
+  to: Scalars['Float'];
+}>;
+
+
+export type SendFriendRequestMutation = (
+  { __typename?: 'Mutation' }
+  & { sendFriendRequest: (
+    { __typename?: 'UserResponse' }
+    & Pick<UserResponse, 'ok' | 'msg'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'MutationError' }
+      & Pick<MutationError, 'msg' | 'path'>
+    )>> }
+  ) }
+);
+
+export type GetUserByIdQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type GetUserByIdQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'email' | 'age' | 'description' | 'github' | 'image' | 'google'>
+    & { teams: Array<(
+      { __typename?: 'UserToTeam' }
+      & Pick<UserToTeam, 'userIsAdmin'>
+      & { team: (
+        { __typename?: 'Team' }
+        & Pick<Team, 'id' | 'name'>
+      ) }
+    )>, friends: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'email' | 'image' | 'github' | 'google'>
+    )> }
+  )> }
+);
+
 export const MutationResponseFragmentDoc = gql`
     fragment MutationResponse on IMutationResponse {
   ok
@@ -768,67 +826,6 @@ export function useGetFriendRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetFriendRequestsQueryHookResult = ReturnType<typeof useGetFriendRequestsQuery>;
 export type GetFriendRequestsLazyQueryHookResult = ReturnType<typeof useGetFriendRequestsLazyQuery>;
 export type GetFriendRequestsQueryResult = Apollo.QueryResult<GetFriendRequestsQuery, GetFriendRequestsQueryVariables>;
-export const GetUserByIdDocument = gql`
-    query getUserById($id: Float!) {
-  user(id: $id) {
-    id
-    name
-    email
-    age
-    description
-    github
-    image
-    google
-    teams {
-      userIsAdmin
-      team {
-        id
-        name
-      }
-    }
-    friends {
-      id
-      name
-      email
-      image
-      github
-      google
-    }
-  }
-}
-    `;
-export type GetUserByIdComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetUserByIdQuery, GetUserByIdQueryVariables>, 'query'> & ({ variables: GetUserByIdQueryVariables; skip?: boolean; } | { skip: boolean; });
-
-    export const GetUserByIdComponent = (props: GetUserByIdComponentProps) => (
-      <ApolloReactComponents.Query<GetUserByIdQuery, GetUserByIdQueryVariables> query={GetUserByIdDocument} {...props} />
-    );
-    
-
-/**
- * __useGetUserByIdQuery__
- *
- * To run a query within a React component, call `useGetUserByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserByIdQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetUserByIdQuery(baseOptions?: Apollo.QueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
-        return Apollo.useQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, baseOptions);
-      }
-export function useGetUserByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, baseOptions);
-        }
-export type GetUserByIdQueryHookResult = ReturnType<typeof useGetUserByIdQuery>;
-export type GetUserByIdLazyQueryHookResult = ReturnType<typeof useGetUserByIdLazyQuery>;
-export type GetUserByIdQueryResult = Apollo.QueryResult<GetUserByIdQuery, GetUserByIdQueryVariables>;
 export const SocialLoginDocument = gql`
     mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
   loginWithToken(data: {token: $token, type: $type}) {
@@ -1306,3 +1303,233 @@ export function useJoinTeamMutation(baseOptions?: Apollo.MutationHookOptions<Joi
 export type JoinTeamMutationHookResult = ReturnType<typeof useJoinTeamMutation>;
 export type JoinTeamMutationResult = Apollo.MutationResult<JoinTeamMutation>;
 export type JoinTeamMutationOptions = Apollo.BaseMutationOptions<JoinTeamMutation, JoinTeamMutationVariables>;
+export const GetAllUsersDocument = gql`
+    query getAllUsers {
+  users {
+    id
+    name
+    image
+    description
+    github
+    google
+  }
+}
+    `;
+export type GetAllUsersComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetAllUsersQuery, GetAllUsersQueryVariables>, 'query'>;
+
+    export const GetAllUsersComponent = (props: GetAllUsersComponentProps) => (
+      <ApolloReactComponents.Query<GetAllUsersQuery, GetAllUsersQueryVariables> query={GetAllUsersDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetAllUsersQuery__
+ *
+ * To run a query within a React component, call `useGetAllUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>) {
+        return Apollo.useQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, baseOptions);
+      }
+export function useGetAllUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>) {
+          return Apollo.useLazyQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, baseOptions);
+        }
+export type GetAllUsersQueryHookResult = ReturnType<typeof useGetAllUsersQuery>;
+export type GetAllUsersLazyQueryHookResult = ReturnType<typeof useGetAllUsersLazyQuery>;
+export type GetAllUsersQueryResult = Apollo.QueryResult<GetAllUsersQuery, GetAllUsersQueryVariables>;
+export const GetMyPendientFriendRequestsDocument = gql`
+    query getMyPendientFriendRequests {
+  myPendientFriendRequests {
+    receiver {
+      id
+    }
+  }
+}
+    `;
+export type GetMyPendientFriendRequestsComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetMyPendientFriendRequestsQuery, GetMyPendientFriendRequestsQueryVariables>, 'query'>;
+
+    export const GetMyPendientFriendRequestsComponent = (props: GetMyPendientFriendRequestsComponentProps) => (
+      <ApolloReactComponents.Query<GetMyPendientFriendRequestsQuery, GetMyPendientFriendRequestsQueryVariables> query={GetMyPendientFriendRequestsDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetMyPendientFriendRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetMyPendientFriendRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyPendientFriendRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyPendientFriendRequestsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyPendientFriendRequestsQuery(baseOptions?: Apollo.QueryHookOptions<GetMyPendientFriendRequestsQuery, GetMyPendientFriendRequestsQueryVariables>) {
+        return Apollo.useQuery<GetMyPendientFriendRequestsQuery, GetMyPendientFriendRequestsQueryVariables>(GetMyPendientFriendRequestsDocument, baseOptions);
+      }
+export function useGetMyPendientFriendRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyPendientFriendRequestsQuery, GetMyPendientFriendRequestsQueryVariables>) {
+          return Apollo.useLazyQuery<GetMyPendientFriendRequestsQuery, GetMyPendientFriendRequestsQueryVariables>(GetMyPendientFriendRequestsDocument, baseOptions);
+        }
+export type GetMyPendientFriendRequestsQueryHookResult = ReturnType<typeof useGetMyPendientFriendRequestsQuery>;
+export type GetMyPendientFriendRequestsLazyQueryHookResult = ReturnType<typeof useGetMyPendientFriendRequestsLazyQuery>;
+export type GetMyPendientFriendRequestsQueryResult = Apollo.QueryResult<GetMyPendientFriendRequestsQuery, GetMyPendientFriendRequestsQueryVariables>;
+export const GetMyReceivedFriendRequestsDocument = gql`
+    query getMyReceivedFriendRequests {
+  myFriendRequests {
+    id
+    sender {
+      id
+      name
+      image
+    }
+  }
+}
+    `;
+export type GetMyReceivedFriendRequestsComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetMyReceivedFriendRequestsQuery, GetMyReceivedFriendRequestsQueryVariables>, 'query'>;
+
+    export const GetMyReceivedFriendRequestsComponent = (props: GetMyReceivedFriendRequestsComponentProps) => (
+      <ApolloReactComponents.Query<GetMyReceivedFriendRequestsQuery, GetMyReceivedFriendRequestsQueryVariables> query={GetMyReceivedFriendRequestsDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetMyReceivedFriendRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetMyReceivedFriendRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyReceivedFriendRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyReceivedFriendRequestsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyReceivedFriendRequestsQuery(baseOptions?: Apollo.QueryHookOptions<GetMyReceivedFriendRequestsQuery, GetMyReceivedFriendRequestsQueryVariables>) {
+        return Apollo.useQuery<GetMyReceivedFriendRequestsQuery, GetMyReceivedFriendRequestsQueryVariables>(GetMyReceivedFriendRequestsDocument, baseOptions);
+      }
+export function useGetMyReceivedFriendRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyReceivedFriendRequestsQuery, GetMyReceivedFriendRequestsQueryVariables>) {
+          return Apollo.useLazyQuery<GetMyReceivedFriendRequestsQuery, GetMyReceivedFriendRequestsQueryVariables>(GetMyReceivedFriendRequestsDocument, baseOptions);
+        }
+export type GetMyReceivedFriendRequestsQueryHookResult = ReturnType<typeof useGetMyReceivedFriendRequestsQuery>;
+export type GetMyReceivedFriendRequestsLazyQueryHookResult = ReturnType<typeof useGetMyReceivedFriendRequestsLazyQuery>;
+export type GetMyReceivedFriendRequestsQueryResult = Apollo.QueryResult<GetMyReceivedFriendRequestsQuery, GetMyReceivedFriendRequestsQueryVariables>;
+export const SendFriendRequestDocument = gql`
+    mutation sendFriendRequest($to: Float!) {
+  sendFriendRequest(to: $to) {
+    ok
+    msg
+    errors {
+      msg
+      path
+    }
+  }
+}
+    `;
+export type SendFriendRequestMutationFn = Apollo.MutationFunction<SendFriendRequestMutation, SendFriendRequestMutationVariables>;
+export type SendFriendRequestComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<SendFriendRequestMutation, SendFriendRequestMutationVariables>, 'mutation'>;
+
+    export const SendFriendRequestComponent = (props: SendFriendRequestComponentProps) => (
+      <ApolloReactComponents.Mutation<SendFriendRequestMutation, SendFriendRequestMutationVariables> mutation={SendFriendRequestDocument} {...props} />
+    );
+    
+
+/**
+ * __useSendFriendRequestMutation__
+ *
+ * To run a mutation, you first call `useSendFriendRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendFriendRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendFriendRequestMutation, { data, loading, error }] = useSendFriendRequestMutation({
+ *   variables: {
+ *      to: // value for 'to'
+ *   },
+ * });
+ */
+export function useSendFriendRequestMutation(baseOptions?: Apollo.MutationHookOptions<SendFriendRequestMutation, SendFriendRequestMutationVariables>) {
+        return Apollo.useMutation<SendFriendRequestMutation, SendFriendRequestMutationVariables>(SendFriendRequestDocument, baseOptions);
+      }
+export type SendFriendRequestMutationHookResult = ReturnType<typeof useSendFriendRequestMutation>;
+export type SendFriendRequestMutationResult = Apollo.MutationResult<SendFriendRequestMutation>;
+export type SendFriendRequestMutationOptions = Apollo.BaseMutationOptions<SendFriendRequestMutation, SendFriendRequestMutationVariables>;
+export const GetUserByIdDocument = gql`
+    query getUserById($id: Float!) {
+  user(id: $id) {
+    id
+    name
+    email
+    age
+    description
+    github
+    image
+    google
+    teams {
+      userIsAdmin
+      team {
+        id
+        name
+      }
+    }
+    friends {
+      id
+      name
+      email
+      image
+      github
+      google
+    }
+  }
+}
+    `;
+export type GetUserByIdComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetUserByIdQuery, GetUserByIdQueryVariables>, 'query'> & ({ variables: GetUserByIdQueryVariables; skip?: boolean; } | { skip: boolean; });
+
+    export const GetUserByIdComponent = (props: GetUserByIdComponentProps) => (
+      <ApolloReactComponents.Query<GetUserByIdQuery, GetUserByIdQueryVariables> query={GetUserByIdDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetUserByIdQuery__
+ *
+ * To run a query within a React component, call `useGetUserByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetUserByIdQuery(baseOptions?: Apollo.QueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
+        return Apollo.useQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, baseOptions);
+      }
+export function useGetUserByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, baseOptions);
+        }
+export type GetUserByIdQueryHookResult = ReturnType<typeof useGetUserByIdQuery>;
+export type GetUserByIdLazyQueryHookResult = ReturnType<typeof useGetUserByIdLazyQuery>;
+export type GetUserByIdQueryResult = Apollo.QueryResult<GetUserByIdQuery, GetUserByIdQueryVariables>;
