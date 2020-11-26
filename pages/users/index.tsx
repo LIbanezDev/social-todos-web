@@ -14,7 +14,7 @@ const Teams = () => {
 		<Layout
 			description={'Lista de usuarios registrados en Social Todos'}
 			title={'Social Todos - Usuarios'}
-			{...userLoading}
+			authRequired={true}
 		>
 			{loading || loadingFR || userLoading.loading ? (
 				<CircularProgress />

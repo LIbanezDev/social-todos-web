@@ -22,8 +22,8 @@ query getTeamById($id: Float!) {
 	}
 }
 
-query getAllTeams {
-	teams {
+query getAllTeams($offset: Float!, $limit: Float!) {
+	teams(offset: $offset, limit: $limit) {
 		id
 		name
 		isPublic

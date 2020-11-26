@@ -1,5 +1,7 @@
 // Create a theme instance.
-const theme = {
+import { createMuiTheme } from '@material-ui/core';
+
+export const palette = {
 	info: {
 		main: '#24292e',
 	},
@@ -19,4 +21,9 @@ const theme = {
 		default: '#fff',
 	},
 };
+
+const theme = createMuiTheme({
+	palette,
+});
+
 export default theme;

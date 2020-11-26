@@ -5,11 +5,12 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { CloudDownload, FileCopy } from '@material-ui/icons';
+import { Eject, Lock, LockOpen } from '@material-ui/icons';
 import { GetAllTeamsQuery } from '../../__generated__/GraphQLTypes';
 import { Button, Grid, Tooltip } from '@material-ui/core';
 import Link from 'next/link';
 import ConfirmJoinTeamDialog from './ConfirmJoinTeamDialog';
+import { TeamFilters } from '../../pages/teams';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -39,10 +40,10 @@ const useStyles = makeStyles(theme => ({
 
 interface TeamsListProps {
 	teamsResult: GetAllTeamsQuery;
-	teamsId: string[];
+	filters: TeamFilters;
 }
 
-const TeamsList = ({ teamsResult, teamsId }: TeamsListProps) => {
+const TeamsList = ({ teamsResult, filters }: TeamsListProps) => {
 	const classes = useStyles();
 	const [openDialog, setOpenDialog] = useState<{
 		public: boolean;
@@ -91,44 +92,54 @@ const TeamsList = ({ teamsResult, teamsId }: TeamsListProps) => {
 				publicTeam={openDialog.public}
 			/>
 			{teamsResult.teams
-				.filter(team => !teamsId.includes(team.id))
+				.filter(team => {
+					let isValid: boolean = true;
+					/*if (teamsId.includes(team.id)) isValid = false;*/
+					return isValid
+				})
 				.map(team => (
 					<Grid item xs={12} sm={4}>
 						<Card className={classes.root} elevation={5}>
 							<div className={classes.details}>
 								<CardContent className={classes.content}>
-									<Link href={`/teams/${team.id}`}>
-										<Button color={'primary'}>
-											<Typography component='h5' variant='h5'>
-												{team.name}
-											</Typography>
-										</Button>
-									</Link>
+									{team.isPublic ? (
+										<Link href={`/teams/${team.id}`}>
+											<Button color={'primary'}>
+												<Typography component='h5' variant='h5'>
+													{team.name}
+												</Typography>
+											</Button>
+										</Link>
+									) : (
+										<Typography component='h5' variant='h5'>
+											{team.name}
+										</Typography>
+									)}
 									<Typography variant='subtitle1' color='textSecondary'>
 										{team.description}
 									</Typography>
-									<Typography variant='subtitle1' color='textSecondary'>
-										{team.isPublic}
-									</Typography>
 								</CardContent>
 								<div className={classes.controls}>
-									<IconButton aria-label='previous'>
-										<Tooltip
-											title='Join Team'
-											aria-label='add'
-											onClick={() =>
-												handleClickOpen(
-													team.id,
-													team.name,
-													team.isPublic ? 'public' : 'private'
-												)
-											}
-										>
-											<CloudDownload className={classes.playIcon} />
-										</Tooltip>
+									<IconButton color='default' disabled>
+										{team.isPublic ? (
+											<LockOpen className={classes.playIcon} />
+										) : (
+											<Lock className={classes.playIcon} />
+										)}
 									</IconButton>
-									<IconButton aria-label='next'>
-										<FileCopy className={classes.playIcon} color='primary' />
+									<IconButton color='primary'>
+										<Tooltip title={'Join Team'} aria-label={'join team'}>
+											<Eject
+												className={classes.playIcon}
+												onClick={() =>
+													handleClickOpen(
+														team.id,
+														team.name,
+														team.isPublic ? 'public' : 'private'
+													)
+												}
+											/>
+										</Tooltip>
 									</IconButton>
 								</div>
 							</div>

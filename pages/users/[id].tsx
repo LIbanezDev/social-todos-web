@@ -70,7 +70,12 @@ const Profile = () => {
 	};
 
 	return (
-		<Layout {...userLoading} title={'Social Todos - ' + data?.user.name} description='Mi perfil de social todos'>
+		<Layout
+			{...userLoading}
+			title={'Social Todos - ' + data?.user.name}
+			description='Mi perfil de social todos'
+			authRequired={true}
+		>
 			{loading && userLoading.loading ? (
 				<CircularProgress />
 			) : (

@@ -1,14 +1,14 @@
 import React from 'react';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 import { ServerStyleSheets } from '@material-ui/core/styles';
-import theme from '../styles/theme';
+import { palette } from '../styles/theme';
 
 export default class MyDocument extends Document {
 	render() {
 		return (
 			<Html lang='es'>
 				<Head>
-					<meta name='theme-color' content={theme.primary.main} />
+					<meta name='theme-color' content={palette.primary.main} />
 					<meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
 					<meta httpEquiv='Content-Type' content='text/html; charset=ISO-8859-1' />
 					<meta charSet='utf-8' />

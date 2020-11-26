@@ -1,217 +1,218 @@
 # This file was generated based on ".graphqlconfig". Do not edit manually.
 
 schema {
-	query: Query
-	mutation: Mutation
-	subscription: Subscription
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
 }
 
 interface IMutationResponse {
-	errors: [MutationError!]
-	msg: String
-	ok: Boolean!
+    errors: [MutationError!]
+    msg: String
+    ok: Boolean!
 }
 
 union NotificationSubscription = FriendRequest | Message
 
 "Data on versions of this GIF with a fixed height of 200 pixels. Good for mobile use."
 type FixedImage {
-	"The height of this GIF in pixels."
-	height: String!
-	"size: string"
-	size: String!
-	"The publicly-accessible direct URL for this GIF for this size of the GIF"
-	url: String!
-	"The width of this GIF in pixels."
-	width: String!
+    "The height of this GIF in pixels."
+    height: String!
+    "size: string"
+    size: String!
+    "The publicly-accessible direct URL for this GIF for this size of the GIF"
+    url: String!
+    "The width of this GIF in pixels."
+    width: String!
 }
 
 "Solicitudes de amistad entre usuarios"
 type FriendRequest {
-	friendshipState: Boolean!
-	id: ID!
-	receiver: User!
-	sender: User!
+    friendshipState: Boolean!
+    id: ID!
+    receiver: User!
+    sender: User!
 }
 
 "GIF Objects are returned from most of GIPHY API's Endpoints. These objects contain a variety of information, such as the Image Object, which itself includes the URLS for multiple different GIFS formats and sizes."
 type Giphy {
-	"The unique bit.ly URL for this GIF"
-	bitly_url: String!
-	"The date this GIF was added to the GIPHY database."
-	create_datetime: String!
-	"A URL used for embedding this GIF"
-	embed_url: String!
-	"This GIF's unique ID"
-	id: String!
-	"An object containing data for various available formats and sizes of this GIF."
-	images: Image!
-	"The MPAA-style rating for this content. Examples include Y, G, PG, PG-13 and R"
-	rating: String!
-	"The page on which this GIF was found"
-	source: String!
-	"The title that appears on giphy.com for this GIF.d"
-	title: String!
-	"By default, this is almost always GIF."
-	type: String!
-	"The unique URL for this GIF"
-	url: String!
-	"The username this GIF is attached to, if applicable"
-	username: String!
+    "The unique bit.ly URL for this GIF"
+    bitly_url: String!
+    "The date this GIF was added to the GIPHY database."
+    create_datetime: String!
+    "A URL used for embedding this GIF"
+    embed_url: String!
+    "This GIF's unique ID"
+    id: String!
+    "An object containing data for various available formats and sizes of this GIF."
+    images: Image!
+    "The MPAA-style rating for this content. Examples include Y, G, PG, PG-13 and R"
+    rating: String!
+    "The page on which this GIF was found"
+    source: String!
+    "The title that appears on giphy.com for this GIF.d"
+    title: String!
+    "By default, this is almost always GIF."
+    type: String!
+    "The unique URL for this GIF"
+    url: String!
+    "The username this GIF is attached to, if applicable"
+    username: String!
 }
 
 "The Images Object found in the GIF Object contains a series of Rendition Objects. These Rendition Objects includes the URLs and sizes for the many different renditions we offer for each GIF."
 type Image {
-	"Data on versions of this GIF with a fixed height of 200 pixels. Good for mobile use."
-	fixed_height: FixedImage!
-	"Data on versions of this GIF with a fixed width of 200 pixels. Good for mobile use."
-	fixed_width: FixedImage!
+    "Data on versions of this GIF with a fixed height of 200 pixels. Good for mobile use."
+    fixed_height: FixedImage!
+    "Data on versions of this GIF with a fixed width of 200 pixels. Good for mobile use."
+    fixed_width: FixedImage!
 }
 
 type LoginResponse implements IMutationResponse {
-	errors: [MutationError!]
-	msg: String
-	ok: Boolean!
-	token: String
-	user: User
+    errors: [MutationError!]
+    msg: String
+    ok: Boolean!
+    token: String
+    user: User
 }
 
 "Mensajes enviados entre los usuarios."
 type Message {
-	content: String!
-	date: DateTime!
-	id: ID!
-	receiver: User!
-	sender: User!
+    content: String!
+    date: DateTime!
+    id: ID!
+    receiver: User!
+    sender: User!
 }
 
 type MessageResponse implements IMutationResponse {
-	errors: [MutationError!]
-	message: Message
-	msg: String
-	ok: Boolean!
+    errors: [MutationError!]
+    message: Message
+    msg: String
+    ok: Boolean!
 }
 
 type Mutation {
-	answerFriendRequest(accept: Boolean!, requestId: Float!): Boolean!
-	createTeam(data: CreateTeamInput!): TeamResponse!
-	enviarMensaje(message: String!, to: Float!): MessageResponse!
-	joinTeam(data: JoinTeamInput!): TeamResponse!
-	login(email: String!, password: String!): LoginResponse!
-	loginWithToken(data: SocialRegisterInput!): LoginResponse!
-	register(data: UserRegisterInput!): UserResponse!
-	sendFriendRequest(to: Float!): UserResponse!
+    answerFriendRequest(accept: Boolean!, requestId: Float!): Boolean!
+    createTeam(data: CreateTeamInput!): TeamResponse!
+    enviarMensaje(message: String!, to: Float!): MessageResponse!
+    joinTeam(data: JoinTeamInput!): TeamResponse!
+    login(email: String!, password: String!): LoginResponse!
+    loginWithToken(data: SocialRegisterInput!): LoginResponse!
+    register(data: UserRegisterInput!): UserResponse!
+    sendFriendRequest(to: Float!): UserResponse!
 }
 
 type MutationError {
-	msg: String
-	path: String
+    msg: String
+    path: String
 }
 
 type Query {
-	myChat(with: Int!): [Message!]!
-	myFriendRequests: [FriendRequest!]!
-	myPendientFriendRequests: [FriendRequest!]!
-	"Search gifs"
-	searchGifs(query: String!): [Giphy!]
-	"Get One Team by team id param"
-	team(id: Float!): Team
-	"Get Teams!"
-	teams: [Team!]!
-	"Trending giphpys"
-	trendingGifs(limit: Float = 25.0, offset: Float = 0.0): [Giphy!]
-	"Get user by id. If you want to see your own info set id = -1"
-	user(id: Float!): User
-	users: [User!]!
+    myChat(with: Int!): [Message!]!
+    myFriendRequests: [FriendRequest!]!
+    myPendientFriendRequests: [FriendRequest!]!
+    "Search gifs"
+    searchGifs(query: String!): [Giphy!]
+    "Get One Team by team id param"
+    team(id: Float!): Team
+    "Get Teams!"
+    teams(limit: Float = 6.0, offset: Float = 0.0): [Team!]!
+    "Trending giphpys"
+    trendingGifs(limit: Float = 25.0, offset: Float = 0.0): [Giphy!]
+    "Get user by id. If you want to see your own info set id = -1"
+    user(id: Float!): User
+    users: [User!]!
 }
 
 type Subscription {
-	waitNotifications: NotificationSubscription!
+    waitNotifications: NotificationSubscription!
 }
 
 type Team {
-	description: String!
-	id: ID!
-	image: String
-	isPublic: Boolean!
-	name: String!
-	users: [UserToTeam!]!
+    description: String!
+    id: ID!
+    image: String
+    isPublic: Boolean!
+    name: String!
+    users: [UserToTeam!]!
 }
 
 type TeamResponse implements IMutationResponse {
-	errors: [MutationError!]
-	msg: String
-	ok: Boolean!
-	team: Team
+    errors: [MutationError!]
+    msg: String
+    ok: Boolean!
+    team: Team
 }
 
 "Registered users"
 type User {
-	age: Float!
-	description: String!
-	email: String!
-	friends: [User!]!
-	github: Boolean!
-	google: Boolean!
-	id: ID!
-	image: String
-	name: String!
-	receivedMessages: [Message!]!
-	sentMessages: [Message!]!
-	teams: [UserToTeam!]!
+    age: Float!
+    description: String!
+    email: String!
+    friends: [User!]!
+    github: Boolean!
+    google: Boolean!
+    id: ID!
+    image: String
+    name: String!
+    receivedMessages: [Message!]!
+    sentMessages: [Message!]!
+    teams: [UserToTeam!]!
 }
 
 type UserResponse implements IMutationResponse {
-	errors: [MutationError!]
-	msg: String
-	ok: Boolean!
-	user: User
+    errors: [MutationError!]
+    msg: String
+    ok: Boolean!
+    user: User
 }
 
 type UserToTeam {
-	team: Team!
-	user: User!
-	userIsAdmin: Boolean!
+    team: Team!
+    user: User!
+    userIsAdmin: Boolean!
 }
 
 "External auth apps like GitHub or Google"
 enum EXTERNAL_AUTH_APPS {
-	GitHub
-	Google
+    GitHub
+    Google
 }
 
 input CreateTeamInput {
-	"Team optional description"
-	description: String
-	image: Upload
-	"Team Name"
-	name: String!
-	"Team optional password"
-	password: String
+    "Team optional description"
+    description: String
+    image: Upload
+    "Team Name"
+    name: String!
+    "Team optional password"
+    password: String
 }
 
 "Informacion necesaria para unirse a un equipo."
 input JoinTeamInput {
-	"ID del equipo a ingresar."
-	id: Float!
-	"Contraseña del equipo a ingresar, nulo si es publico."
-	password: String
+    "ID del equipo a ingresar."
+    id: Float!
+    "Contraseña del equipo a ingresar, nulo si es publico."
+    password: String
 }
 
 "Datos necesarios para ingresar mediante una aplicacion externa como GitHub o Google"
 input SocialRegisterInput {
-	token: String!
-	type: EXTERNAL_AUTH_APPS!
+    token: String!
+    type: EXTERNAL_AUTH_APPS!
 }
 
 "Informacion necesaria para crear nuevos usuarios"
 input UserRegisterInput {
-	bornDate: DateTime!
-	email: String!
-	image: Upload
-	name: String!
-	password: String
+    bornDate: DateTime!
+    email: String!
+    image: Upload
+    name: String!
+    password: String
 }
+
 
 "The javascript `Date` as string. Type represents date and time as the ISO Date string."
 scalar DateTime

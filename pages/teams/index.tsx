@@ -1,47 +1,142 @@
 import React from 'react';
 import Layout from '../../components/layout/Layout';
-import { useFetchUser } from '../../lib/hooks/useFetchUser';
-import { useGetAllTeamsQuery } from '../../__generated__/GraphQLTypes';
+import { GetAllTeamsDocument, useGetAllTeamsQuery } from '../../__generated__/GraphQLTypes';
 import CreateTeamForm from '../../components/team/CreateTeamForm';
 import TeamsList from '../../components/team/TeamsList';
-import { Button, CircularProgress, Dialog, DialogContent, DialogTitle, Grid } from '@material-ui/core';
+import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	Button,
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	FormControlLabel,
+	Grid,
+	Switch,
+	TextField,
+	Typography,
+} from '@material-ui/core';
+import { ExpandMore } from '@material-ui/icons';
+import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
+import { initializeApollo } from '../../lib/apolloClient';
+
+export interface TeamFilters {
+	name: string;
+	publicTeam: boolean;
+}
 
 const Teams = () => {
-	const userLoading = useFetchUser({ required: false });
-	const { data, loading } = useGetAllTeamsQuery();
-	const [openCreateTeamDialog, setOpenCreateTeamDialog] = React.useState(false);
+	const { query } = useRouter();
+	const { data, loading } = useGetAllTeamsQuery({
+		variables: {
+			offset: 0,
+			limit: 6,
+		},
+	});
+	const [openCreateTeamDialog, setOpenCreateTeamDialog] = React.useState<boolean>(false);
+	const [filters, setFilters] = React.useState<TeamFilters>({
+		name: null,
+		publicTeam: null,
+	});
+
+	const toggleChecked = () => {
+		setFilters(prev => ({
+			...prev,
+			publicTeam: !prev.publicTeam,
+		}));
+	};
+
+	const handleInputChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+		setFilters({
+			name: evt.target.value,
+			publicTeam: filters.publicTeam,
+		});
+	};
+
 	return (
 		<Layout
+			authRequired={true}
 			title={'Social Todos - Teams'}
-			{...userLoading}
 			description='Social Todos - Lista de equipos disponibles, tanto privados como publicos'
 		>
-			<Grid item xs={12} sm={4}>
-				<Grid container>
-					<h2> Filtros </h2>
+			<Dialog
+				open={openCreateTeamDialog}
+				onClose={() => setOpenCreateTeamDialog(false)}
+				aria-labelledby='alert-dialog-title'
+				aria-describedby='alert-dialog-description'
+			>
+				<DialogTitle id='alert-dialog-title'>Crear un nuevo equipo</DialogTitle>
+				<DialogContent>
+					<CreateTeamForm />
+				</DialogContent>
+			</Dialog>
+			<Grid container style={{ marginBottom: 10 }}>
+				<Grid item xs={12} sm={4}>
+					<Grid container>
+						<Accordion elevation={3}>
+							<AccordionSummary
+								expandIcon={<ExpandMore />}
+								aria-controls='panel1a-content'
+								id='panel1a-header'
+							>
+								<Typography>Filtros</Typography>
+							</AccordionSummary>
+							<AccordionDetails>
+								<Grid item xs={12} sm={7} style={{ marginRight: 10 }}>
+									<TextField
+										id='search-by-name'
+										value={filters.name}
+										onChange={handleInputChange}
+										label='Buscar por nombre'
+										variant='outlined'
+									/>
+								</Grid>
+								<Grid item xs={12} sm={5}>
+									<FormControlLabel
+										control={
+											<Switch
+												size='small'
+												checked={filters.publicTeam}
+												onChange={toggleChecked}
+											/>
+										}
+										label={'Solo publicos'}
+									/>
+								</Grid>
+							</AccordionDetails>
+						</Accordion>
+					</Grid>
+				</Grid>
+				<Grid item xs={12} sm={8} justify='flex-end'>
+					<Button variant='contained' color='primary' onClick={() => setOpenCreateTeamDialog(true)}>
+						Crear un equipo
+					</Button>
 				</Grid>
 			</Grid>
-			<Grid item xs={12} sm={8}>
-				<Dialog
-					open={openCreateTeamDialog}
-					onClose={() => setOpenCreateTeamDialog(false)}
-					aria-labelledby='alert-dialog-title'
-					aria-describedby='alert-dialog-description'
-				>
-					<DialogTitle id='alert-dialog-title'>Crear un nuevo equipo</DialogTitle>
-					<DialogContent>
-						<CreateTeamForm />
-					</DialogContent>
-				</Dialog>
-				<Button onClick={() => setOpenCreateTeamDialog(true)}> Open Create Team Dialog </Button>
+			<Grid container spacing={2}>
+				<TeamsList filters={filters} teamsResult={data} />
 			</Grid>
-			{!userLoading.loading && !loading ? (
-				<TeamsList teamsResult={data} teamsId={userLoading.user.user.teams.map(t => t.team.id)} />
-			) : (
-				<CircularProgress />
-			)}
 		</Layout>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async context => {
+	const apollo = initializeApollo();
+	await apollo.query({
+		query: GetAllTeamsDocument,
+		variables: {
+			offset: 0,
+			limit: 6,
+		},
+	});
+	const cache = apollo.cache.extract();
+	return {
+		props: {
+			initialApolloState: cache,
+		},
+	};
 };
 
 export default Teams;

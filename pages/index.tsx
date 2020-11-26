@@ -1,5 +1,4 @@
 import React from 'react';
-import { useFetchUser } from '../lib/hooks/useFetchUser';
 import Layout from '../components/layout/Layout';
 import Gifs from '../components/Gifs';
 import { GetTrendingGifsDocument, useGetTrendingGifsQuery } from '../__generated__/GraphQLTypes';
@@ -8,12 +7,11 @@ import { initializeApollo } from '../lib/apolloClient';
 import { Typography } from '@material-ui/core';
 
 export default function Home() {
-	const userLoading = useFetchUser({ required: false });
 	const { data, loading } = useGetTrendingGifsQuery();
 	return (
 		<Layout
 			title='Social Todos - Inicio'
-			{...userLoading}
+			authRequired={false}
 			description='Inicio Social Todos, crea, organiza todos e interactua con tu equipo u amigos'
 		>
 			<Typography variant='h1'> Social Todos </Typography>

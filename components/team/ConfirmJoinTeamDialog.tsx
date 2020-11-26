@@ -76,7 +76,6 @@ const ConfirmJoinTeamDialog = ({ open, handleClose, teamSelected, publicTeam }: 
 						<>
 							<Typography variant='body1' style={{ marginBottom: 18 }}>
 								{teamSelected.name} es un equipo privado, debes ingresar contraseña.
-								{password}
 							</Typography>
 							<TextField
 								autoComplete='off'

@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import { GetChatWithQuery } from '../__generated__/GraphQLTypes';
 import Layout from '../components/layout/Layout';
-import { useFetchUser } from '../lib/hooks/useFetchUser';
 import SendMessage from '../components/SendMessage';
 import Messages from '../components/Messages';
 import { Grid, Typography } from '@material-ui/core';
 import Users from '../components/Users';
 
 const Chat = () => {
-	const userLoading = useFetchUser({ required: true });
 	const [messages, setMessages] = useState<GetChatWithQuery>(null);
 	const [selectedUserId, setSelectedUserId] = useState('0');
 
 	return (
 		<Layout
-			{...userLoading}
+			authRequired={true}
 			setMessages={setMessages}
 			currentChat={selectedUserId}
 			description='Chat de Social Todos'

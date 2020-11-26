@@ -241,6 +241,12 @@ export type QueryMyChatArgs = {
 };
 
 
+export type QueryTeamsArgs = {
+  limit?: Maybe<Scalars['Float']>;
+  offset?: Maybe<Scalars['Float']>;
+};
+
+
 export type QueryTeamArgs = {
   id: Scalars['Float'];
 };
@@ -540,7 +546,10 @@ export type GetTeamByIdQuery = (
   )> }
 );
 
-export type GetAllTeamsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllTeamsQueryVariables = Exact<{
+  offset: Scalars['Float'];
+  limit: Scalars['Float'];
+}>;
 
 
 export type GetAllTeamsQuery = (
@@ -1169,8 +1178,8 @@ export type GetTeamByIdQueryHookResult = ReturnType<typeof useGetTeamByIdQuery>;
 export type GetTeamByIdLazyQueryHookResult = ReturnType<typeof useGetTeamByIdLazyQuery>;
 export type GetTeamByIdQueryResult = Apollo.QueryResult<GetTeamByIdQuery, GetTeamByIdQueryVariables>;
 export const GetAllTeamsDocument = gql`
-    query getAllTeams {
-  teams {
+    query getAllTeams($offset: Float!, $limit: Float!) {
+  teams(offset: $offset, limit: $limit) {
     id
     name
     isPublic
@@ -1179,7 +1188,7 @@ export const GetAllTeamsDocument = gql`
   }
 }
     `;
-export type GetAllTeamsComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetAllTeamsQuery, GetAllTeamsQueryVariables>, 'query'>;
+export type GetAllTeamsComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetAllTeamsQuery, GetAllTeamsQueryVariables>, 'query'> & ({ variables: GetAllTeamsQueryVariables; skip?: boolean; } | { skip: boolean; });
 
     export const GetAllTeamsComponent = (props: GetAllTeamsComponentProps) => (
       <ApolloReactComponents.Query<GetAllTeamsQuery, GetAllTeamsQueryVariables> query={GetAllTeamsDocument} {...props} />
@@ -1198,6 +1207,8 @@ export type GetAllTeamsComponentProps = Omit<ApolloReactComponents.QueryComponen
  * @example
  * const { data, loading, error } = useGetAllTeamsQuery({
  *   variables: {
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */

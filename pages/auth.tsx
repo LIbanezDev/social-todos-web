@@ -8,37 +8,31 @@ import Login from '../components/auth/Login';
 
 const Auth = () => {
 	const { replace } = useRouter();
-	const userLoading = useFetchUser({ required: false });
+	const { user, loading } = useFetchUser({ required: false });
 
-	if (userLoading.loading)
-		return (
-			<Layout
-				title='Auth'
-				{...userLoading}
-				description='Pagina de autenticacion de usuarios para la aplicacion Social Todos,
-					contiene login con github y google'
-			>
-				<CircularProgress />
-			</Layout>
-		);
-
-	if (userLoading.user) {
+	if (!loading && user) {
 		replace('/');
 	}
 
 	return (
 		<Layout
 			title='Social Todos - Ingresa o registrate!'
-			{...userLoading}
+			authRequired={false}
 			description='Pagina de autenticacion de usuarios para la aplicacion Social Todos,
 					contiene login con github y google'
 		>
-			<Grid item xs={12} sm={4}>
-				<Login />
-			</Grid>
-			<Grid item xs={12} sm={4}>
-				<Register />
-			</Grid>
+			{loading ? (
+				<CircularProgress />
+			) : (
+				<>
+					<Grid item xs={12} sm={4}>
+						<Login />
+					</Grid>
+					<Grid item xs={12} sm={4}>
+						<Register />
+					</Grid>
+				</>
+			)}
 		</Layout>
 	);
 };
