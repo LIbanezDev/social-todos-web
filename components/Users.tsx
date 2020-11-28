@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Avatar, CircularProgress, List, ListItem, ListItemIcon, ListItemText, Paper, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { GetChatWithDocument, GetChatWithQuery, useGetUsersQuery } from '../__generated__/GraphQLTypes';
+import {GetChatWithDocument, GetChatWithQuery, useGetAllUsersQuery} from '../__generated__/GraphQLTypes';
 import { ApolloQueryResult, useApolloClient } from '@apollo/client';
 import { useFetchUser } from '../lib/hooks/useFetchUser';
 
@@ -25,7 +25,13 @@ const Users = ({
 	const classes = useStyles();
 	const { query } = useApolloClient();
 	const { user, loading: loadingMe } = useFetchUser({ required: true });
-	const { data: users, loading: loadingUsers } = useGetUsersQuery();
+	const { data: users, loading: loadingUsers } = useGetAllUsersQuery({
+		variables: {
+			data: {
+				pageSize: 20
+			}
+		}
+	});
 
 	const setChat = async (userId: number) => {
 		const { data }: ApolloQueryResult<GetChatWithQuery> = await query({
@@ -48,7 +54,7 @@ const Users = ({
 				<CircularProgress />
 			) : (
 				<List component='nav' aria-label='main mailbox folders'>
-					{users.users.map(u => {
+					{users.users.items.map(u => {
 						if (u.id !== user.user.id) {
 							return (
 								<ListItem
