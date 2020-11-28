@@ -143,6 +143,13 @@ export type TeamResponse = IMutationResponse & {
   team?: Maybe<Team>;
 };
 
+export type TeamPaginatedResponse = {
+  __typename?: 'TeamPaginatedResponse';
+  items: Array<Team>;
+  cursor?: Maybe<Scalars['String']>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type UserResponse = IMutationResponse & {
   __typename?: 'UserResponse';
   ok: Scalars['Boolean'];
@@ -160,10 +167,22 @@ export type LoginResponse = IMutationResponse & {
   token?: Maybe<Scalars['String']>;
 };
 
+export type UserPaginatedResponse = {
+  __typename?: 'UserPaginatedResponse';
+  items: Array<User>;
+  cursor?: Maybe<Scalars['String']>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type IMutationResponse = {
   ok: Scalars['Boolean'];
   msg?: Maybe<Scalars['String']>;
   errors?: Maybe<Array<MutationError>>;
+};
+
+export type PaginateInput = {
+  pageSize: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
 };
 
 export type CreateTeamInput = {
@@ -215,13 +234,16 @@ export type Query = {
   myChat: Array<Message>;
   /** Get Teams! */
   teams: Array<Team>;
+  /** Get paginated using cursor */
+  teamsPaginated: TeamPaginatedResponse;
   /** Get One Team by team id param */
   team?: Maybe<Team>;
   myFriendRequests: Array<FriendRequest>;
   myPendientFriendRequests: Array<FriendRequest>;
+  seed: Scalars['Boolean'];
   /** Get user by id. If you want to see your own info set id = -1 */
   user?: Maybe<User>;
-  users: Array<User>;
+  users: UserPaginatedResponse;
 };
 
 
@@ -247,6 +269,11 @@ export type QueryTeamsArgs = {
 };
 
 
+export type QueryTeamsPaginatedArgs = {
+  data: PaginateInput;
+};
+
+
 export type QueryTeamArgs = {
   id: Scalars['Float'];
 };
@@ -254,6 +281,11 @@ export type QueryTeamArgs = {
 
 export type QueryUserArgs = {
   id: Scalars['Float'];
+};
+
+
+export type QueryUsersArgs = {
+  data: PaginateInput;
 };
 
 export type Mutation = {
@@ -422,17 +454,6 @@ export type SocialLoginMutation = (
   ) }
 );
 
-export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetUsersQuery = (
-  { __typename?: 'Query' }
-  & { users: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'image'>
-  )> }
-);
-
 export type GetTrendingGifsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -525,6 +546,23 @@ export type GetTeamsIdsQuery = (
   )> }
 );
 
+export type GetPaginatedTeamsQueryVariables = Exact<{
+  data: PaginateInput;
+}>;
+
+
+export type GetPaginatedTeamsQuery = (
+  { __typename?: 'Query' }
+  & { teamsPaginated: (
+    { __typename?: 'TeamPaginatedResponse' }
+    & Pick<TeamPaginatedResponse, 'cursor' | 'hasMore'>
+    & { items: Array<(
+      { __typename?: 'Team' }
+      & Pick<Team, 'id' | 'name' | 'isPublic' | 'description' | 'image'>
+    )> }
+  ) }
+);
+
 export type GetTeamByIdQueryVariables = Exact<{
   id: Scalars['Float'];
 }>;
@@ -597,15 +635,21 @@ export type JoinTeamMutation = (
   ) }
 );
 
-export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllUsersQueryVariables = Exact<{
+  data: PaginateInput;
+}>;
 
 
 export type GetAllUsersQuery = (
   { __typename?: 'Query' }
-  & { users: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'image' | 'description' | 'github' | 'google'>
-  )> }
+  & { users: (
+    { __typename?: 'UserPaginatedResponse' }
+    & Pick<UserPaginatedResponse, 'cursor' | 'hasMore'>
+    & { items: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'image' | 'description' | 'github' | 'google'>
+    )> }
+  ) }
 );
 
 export type GetMyPendientFriendRequestsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -875,46 +919,6 @@ export function useSocialLoginMutation(baseOptions?: Apollo.MutationHookOptions<
 export type SocialLoginMutationHookResult = ReturnType<typeof useSocialLoginMutation>;
 export type SocialLoginMutationResult = Apollo.MutationResult<SocialLoginMutation>;
 export type SocialLoginMutationOptions = Apollo.BaseMutationOptions<SocialLoginMutation, SocialLoginMutationVariables>;
-export const GetUsersDocument = gql`
-    query getUsers {
-  users {
-    id
-    name
-    image
-  }
-}
-    `;
-export type GetUsersComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetUsersQuery, GetUsersQueryVariables>, 'query'>;
-
-    export const GetUsersComponent = (props: GetUsersComponentProps) => (
-      <ApolloReactComponents.Query<GetUsersQuery, GetUsersQueryVariables> query={GetUsersDocument} {...props} />
-    );
-    
-
-/**
- * __useGetUsersQuery__
- *
- * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUsersQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
-        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, baseOptions);
-      }
-export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
-          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, baseOptions);
-        }
-export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
-export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
-export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
 export const GetTrendingGifsDocument = gql`
     query getTrendingGifs {
   trendingGifs {
@@ -1126,6 +1130,53 @@ export function useGetTeamsIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetTeamsIdsQueryHookResult = ReturnType<typeof useGetTeamsIdsQuery>;
 export type GetTeamsIdsLazyQueryHookResult = ReturnType<typeof useGetTeamsIdsLazyQuery>;
 export type GetTeamsIdsQueryResult = Apollo.QueryResult<GetTeamsIdsQuery, GetTeamsIdsQueryVariables>;
+export const GetPaginatedTeamsDocument = gql`
+    query getPaginatedTeams($data: PaginateInput!) {
+  teamsPaginated(data: $data) {
+    cursor
+    hasMore
+    items {
+      id
+      name
+      isPublic
+      description
+      image
+    }
+  }
+}
+    `;
+export type GetPaginatedTeamsComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetPaginatedTeamsQuery, GetPaginatedTeamsQueryVariables>, 'query'> & ({ variables: GetPaginatedTeamsQueryVariables; skip?: boolean; } | { skip: boolean; });
+
+    export const GetPaginatedTeamsComponent = (props: GetPaginatedTeamsComponentProps) => (
+      <ApolloReactComponents.Query<GetPaginatedTeamsQuery, GetPaginatedTeamsQueryVariables> query={GetPaginatedTeamsDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetPaginatedTeamsQuery__
+ *
+ * To run a query within a React component, call `useGetPaginatedTeamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPaginatedTeamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPaginatedTeamsQuery({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useGetPaginatedTeamsQuery(baseOptions?: Apollo.QueryHookOptions<GetPaginatedTeamsQuery, GetPaginatedTeamsQueryVariables>) {
+        return Apollo.useQuery<GetPaginatedTeamsQuery, GetPaginatedTeamsQueryVariables>(GetPaginatedTeamsDocument, baseOptions);
+      }
+export function useGetPaginatedTeamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaginatedTeamsQuery, GetPaginatedTeamsQueryVariables>) {
+          return Apollo.useLazyQuery<GetPaginatedTeamsQuery, GetPaginatedTeamsQueryVariables>(GetPaginatedTeamsDocument, baseOptions);
+        }
+export type GetPaginatedTeamsQueryHookResult = ReturnType<typeof useGetPaginatedTeamsQuery>;
+export type GetPaginatedTeamsLazyQueryHookResult = ReturnType<typeof useGetPaginatedTeamsLazyQuery>;
+export type GetPaginatedTeamsQueryResult = Apollo.QueryResult<GetPaginatedTeamsQuery, GetPaginatedTeamsQueryVariables>;
 export const GetTeamByIdDocument = gql`
     query getTeamById($id: Float!) {
   team(id: $id) {
@@ -1315,18 +1366,22 @@ export type JoinTeamMutationHookResult = ReturnType<typeof useJoinTeamMutation>;
 export type JoinTeamMutationResult = Apollo.MutationResult<JoinTeamMutation>;
 export type JoinTeamMutationOptions = Apollo.BaseMutationOptions<JoinTeamMutation, JoinTeamMutationVariables>;
 export const GetAllUsersDocument = gql`
-    query getAllUsers {
-  users {
-    id
-    name
-    image
-    description
-    github
-    google
+    query getAllUsers($data: PaginateInput!) {
+  users(data: $data) {
+    cursor
+    hasMore
+    items {
+      id
+      name
+      image
+      description
+      github
+      google
+    }
   }
 }
     `;
-export type GetAllUsersComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetAllUsersQuery, GetAllUsersQueryVariables>, 'query'>;
+export type GetAllUsersComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetAllUsersQuery, GetAllUsersQueryVariables>, 'query'> & ({ variables: GetAllUsersQueryVariables; skip?: boolean; } | { skip: boolean; });
 
     export const GetAllUsersComponent = (props: GetAllUsersComponentProps) => (
       <ApolloReactComponents.Query<GetAllUsersQuery, GetAllUsersQueryVariables> query={GetAllUsersDocument} {...props} />
@@ -1345,6 +1400,7 @@ export type GetAllUsersComponentProps = Omit<ApolloReactComponents.QueryComponen
  * @example
  * const { data, loading, error } = useGetAllUsersQuery({
  *   variables: {
+ *      data: // value for 'data'
  *   },
  * });
  */

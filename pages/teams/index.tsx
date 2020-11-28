@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../../components/layout/Layout';
-import { GetAllTeamsDocument, useGetAllTeamsQuery } from '../../__generated__/GraphQLTypes';
+import { useGetPaginatedTeamsQuery } from '../../__generated__/GraphQLTypes';
 import CreateTeamForm from '../../components/team/CreateTeamForm';
 import TeamsList from '../../components/team/TeamsList';
 import {
@@ -8,6 +8,7 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Button,
+	CircularProgress,
 	Dialog,
 	DialogContent,
 	DialogTitle,
@@ -18,9 +19,8 @@ import {
 	Typography,
 } from '@material-ui/core';
 import { ExpandMore } from '@material-ui/icons';
-import { useRouter } from 'next/router';
-import { GetServerSideProps } from 'next';
-import { initializeApollo } from '../../lib/apolloClient';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { Skeleton } from '@material-ui/lab';
 
 export interface TeamFilters {
 	name: string;
@@ -28,18 +28,29 @@ export interface TeamFilters {
 }
 
 const Teams = () => {
-	const { query } = useRouter();
-	const { data, loading } = useGetAllTeamsQuery({
+	const { data, loading, fetchMore } = useGetPaginatedTeamsQuery({
 		variables: {
-			offset: 0,
-			limit: 6,
+			data: {
+				pageSize: 9,
+			},
 		},
 	});
 	const [openCreateTeamDialog, setOpenCreateTeamDialog] = React.useState<boolean>(false);
 	const [filters, setFilters] = React.useState<TeamFilters>({
-		name: null,
+		name: '',
 		publicTeam: null,
 	});
+
+	const fetchMoreTeams = async () => {
+		await fetchMore({
+			variables: {
+				data: {
+					cursor: data.teamsPaginated.cursor,
+					pageSize: 9,
+				},
+			},
+		});
+	};
 
 	const toggleChecked = () => {
 		setFilters(prev => ({
@@ -109,34 +120,39 @@ const Teams = () => {
 						</Accordion>
 					</Grid>
 				</Grid>
-				<Grid item xs={12} sm={8} justify='flex-end'>
+				<Grid item xs={12} sm={8}>
 					<Button variant='contained' color='primary' onClick={() => setOpenCreateTeamDialog(true)}>
 						Crear un equipo
 					</Button>
 				</Grid>
 			</Grid>
-			<Grid container spacing={2}>
-				<TeamsList filters={filters} teamsResult={data} />
+			<Grid container>
+				{loading ? (
+					<CircularProgress />
+				) : (
+					<InfiniteScroll
+						dataLength={data.teamsPaginated.items.length}
+						next={fetchMoreTeams}
+						hasMore={data.teamsPaginated.hasMore}
+						loader={
+							<Grid container spacing={2}>
+								{[...Array(6)].map(() => (
+									<Grid item xs={12} sm={4}>
+										<Skeleton variant='rect' width={480} height={20} />
+										<Skeleton variant='rect' width={480} height={160} />
+									</Grid>
+								))}
+							</Grid>
+						}
+					>
+						<Grid container spacing={2}>
+							<TeamsList filters={filters} teamsResult={data.teamsPaginated.items} />
+						</Grid>
+					</InfiniteScroll>
+				)}
 			</Grid>
 		</Layout>
 	);
-};
-
-export const getServerSideProps: GetServerSideProps = async context => {
-	const apollo = initializeApollo();
-	await apollo.query({
-		query: GetAllTeamsDocument,
-		variables: {
-			offset: 0,
-			limit: 6,
-		},
-	});
-	const cache = apollo.cache.extract();
-	return {
-		props: {
-			initialApolloState: cache,
-		},
-	};
 };
 
 export default Teams;

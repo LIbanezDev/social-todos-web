@@ -1,11 +1,15 @@
-query getAllUsers {
-	users {
-		id
-		name
-		image
-		description
-		github
-		google
+query getAllUsers($data: PaginateInput!) {
+	users(data: $data) {
+		cursor
+		hasMore
+		items {
+			id
+			name
+			image
+			description
+			github
+			google
+		}
 	}
 }
 

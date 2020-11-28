@@ -27,10 +27,11 @@ const UserCard = ({
 	image,
 	description,
 	alreadySendFR,
-}: GetAllUsersQuery['users'][0] & { alreadySendFR: boolean }) => {
+}: GetAllUsersQuery['users']["items"][0] & { alreadySendFR: boolean }) => {
 	const classes = useStyles();
 	const [sendFR] = useSendFriendRequestMutation();
 	const { enqueueSnackbar } = useSnackbar();
+	const [isDisabled, setIsDisabled] = React.useState(false);
 
 	const sendFriendRequest = async (to: string) => {
 		const { data, errors } = await sendFR({
@@ -42,6 +43,9 @@ const UserCard = ({
 			return enqueueSnackbar('Hubo un error al enviar la solicitud, intente mas tarde', {
 				variant: 'error',
 			});
+		}
+		if (data.sendFriendRequest.ok) {
+			setIsDisabled(true);
 		}
 		enqueueSnackbar(data.sendFriendRequest.msg, {
 			variant: data.sendFriendRequest.ok ? 'success' : 'error',
@@ -64,11 +68,11 @@ const UserCard = ({
 					size='small'
 					color='inherit'
 					variant='contained'
-					endIcon={alreadySendFR ? <HourglassEmpty /> : <Add />}
+					endIcon={alreadySendFR || isDisabled ? <HourglassEmpty /> : <Add />}
 					onClick={() => sendFriendRequest(id)}
-					disabled={alreadySendFR}
+					disabled={alreadySendFR || isDisabled}
 				>
-					{alreadySendFR ? 'Solicitud pendiente' : 'Agregar a amigos'}
+					{alreadySendFR || isDisabled ? 'Solicitud pendiente' : 'Agregar a amigos'}
 				</Button>
 				<Link href={`/users/${id}`}>
 					<Button size='small' color='inherit' variant='contained' endIcon={<Launch />}>

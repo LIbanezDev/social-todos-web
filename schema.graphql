@@ -114,15 +114,18 @@ type Query {
     myPendientFriendRequests: [FriendRequest!]!
     "Search gifs"
     searchGifs(query: String!): [Giphy!]
+    seed: Boolean!
     "Get One Team by team id param"
     team(id: Float!): Team
     "Get Teams!"
     teams(limit: Float = 6.0, offset: Float = 0.0): [Team!]!
+    "Get paginated using cursor"
+    teamsPaginated(data: PaginateInput!): TeamPaginatedResponse!
     "Trending giphpys"
     trendingGifs(limit: Float = 25.0, offset: Float = 0.0): [Giphy!]
     "Get user by id. If you want to see your own info set id = -1"
     user(id: Float!): User
-    users: [User!]!
+    users(data: PaginateInput!): UserPaginatedResponse!
 }
 
 type Subscription {
@@ -136,6 +139,12 @@ type Team {
     isPublic: Boolean!
     name: String!
     users: [UserToTeam!]!
+}
+
+type TeamPaginatedResponse {
+    cursor: String
+    hasMore: Boolean!
+    items: [Team!]!
 }
 
 type TeamResponse implements IMutationResponse {
@@ -159,6 +168,12 @@ type User {
     receivedMessages: [Message!]!
     sentMessages: [Message!]!
     teams: [UserToTeam!]!
+}
+
+type UserPaginatedResponse {
+    cursor: String
+    hasMore: Boolean!
+    items: [User!]!
 }
 
 type UserResponse implements IMutationResponse {
@@ -196,6 +211,11 @@ input JoinTeamInput {
     id: Float!
     "Contraseña del equipo a ingresar, nulo si es publico."
     password: String
+}
+
+input PaginateInput {
+    cursor: String
+    pageSize: Int!
 }
 
 "Datos necesarios para ingresar mediante una aplicacion externa como GitHub o Google"

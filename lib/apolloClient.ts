@@ -3,13 +3,13 @@ import { ApolloClient, ApolloLink, InMemoryCache, NormalizedCacheObject } from '
 import { createUploadLink } from 'apollo-upload-client';
 import { getConcatenatedSubscriptionsLink } from './subscriptionsLink';
 import { setContext } from '@apollo/client/link/context';
+import {mergePaginatedData} from "../utils/cacheUtils";
 
 const httpUploadLink: ApolloLink = createUploadLink({
 	uri:
 		process.env.NODE_ENV === 'production'
 			? 'https://social-todos-graph.herokuapp.com/graphql'
 			: 'http://localhost:4000/graphql',
-	//'http://localhost:4000/graphql',
 });
 
 const authLink = process.browser
@@ -38,17 +38,13 @@ export function createApolloClient() {
 			typePolicies: {
 				Query: {
 					fields: {
-						teams: {
+						teamsPaginated: {
 							keyArgs: [],
-							merge(existing, incoming, { args: { offset = 0 }}) {
-								// Slicing is necessary because the existing data is
-								// immutable, and frozen in development.
-								const merged = existing ? existing.slice(0) : [];
-								for (let i = 0; i < incoming.length; ++i) {
-									merged[offset + i] = incoming[i];
-								}
-								return merged;
-							},
+							merge: mergePaginatedData
+						},
+						users: {
+							keyArgs: false,
+							merge: mergePaginatedData
 						}
 					}
 				}

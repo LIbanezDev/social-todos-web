@@ -45,11 +45,3 @@ mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
 		token
 	}
 }
-
-query getUsers {
-	users {
-		id
-		name
-		image
-	}
-}

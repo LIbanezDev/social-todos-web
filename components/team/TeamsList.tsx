@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {useState} from 'react';
+import {makeStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { Eject, Lock, LockOpen } from '@material-ui/icons';
-import { GetAllTeamsQuery } from '../../__generated__/GraphQLTypes';
-import { Button, Grid, Tooltip } from '@material-ui/core';
+import {Eject, Lock, LockOpen} from '@material-ui/icons';
+import {GetPaginatedTeamsQuery} from '../../__generated__/GraphQLTypes';
+import {Button, Grid, Tooltip} from '@material-ui/core';
 import Link from 'next/link';
 import ConfirmJoinTeamDialog from './ConfirmJoinTeamDialog';
-import { TeamFilters } from '../../pages/teams';
+import {TeamFilters} from '../../pages/teams';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -39,11 +39,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 interface TeamsListProps {
-	teamsResult: GetAllTeamsQuery;
+	teamsResult: GetPaginatedTeamsQuery['teamsPaginated']['items'];
 	filters: TeamFilters;
 }
 
-const TeamsList = ({ teamsResult, filters }: TeamsListProps) => {
+const TeamsList = ({ teamsResult }: TeamsListProps) => {
 	const classes = useStyles();
 	const [openDialog, setOpenDialog] = useState<{
 		public: boolean;
@@ -91,14 +91,9 @@ const TeamsList = ({ teamsResult, filters }: TeamsListProps) => {
 				teamSelected={teamSelected}
 				publicTeam={openDialog.public}
 			/>
-			{teamsResult.teams
-				.filter(team => {
-					let isValid: boolean = true;
-					/*if (teamsId.includes(team.id)) isValid = false;*/
-					return isValid
-				})
+			{teamsResult
 				.map(team => (
-					<Grid item xs={12} sm={4}>
+					<Grid item xs={12} sm={4} key={team.id}>
 						<Card className={classes.root} elevation={5}>
 							<div className={classes.details}>
 								<CardContent className={classes.content}>

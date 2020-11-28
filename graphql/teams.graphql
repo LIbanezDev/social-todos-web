@@ -4,6 +4,20 @@ query getTeamsIds {
 	}
 }
 
+query getPaginatedTeams($data: PaginateInput!) {
+	teamsPaginated(data: $data) {
+		cursor
+		hasMore
+		items {
+			id
+			name
+			isPublic
+			description
+			image
+		}
+	}
+}
+
 query getTeamById($id: Float!) {
 	team(id: $id) {
 		id
