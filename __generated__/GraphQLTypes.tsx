@@ -18,16 +18,12 @@ export type Scalars = {
   Upload: any;
 };
 
-/** Mensajes enviados entre los usuarios. */
-export type Message = {
-  __typename?: 'Message';
-  id: Scalars['ID'];
-  date: Scalars['DateTime'];
-  content: Scalars['String'];
-  sender: User;
-  receiver: User;
+export type UserToTeam = {
+  __typename?: 'UserToTeam';
+  userIsAdmin: Scalars['Boolean'];
+  user: User;
+  team: Team;
 };
-
 
 export type Team = {
   __typename?: 'Team';
@@ -37,14 +33,70 @@ export type Team = {
   image?: Maybe<Scalars['String']>;
   isPublic: Scalars['Boolean'];
   users: Array<UserToTeam>;
+  projects: Array<Project>;
 };
 
-export type UserToTeam = {
-  __typename?: 'UserToTeam';
-  userIsAdmin: Scalars['Boolean'];
-  user: User;
-  team: Team;
+export type ProjectToKeyWord = {
+  __typename?: 'ProjectToKeyWord';
+  project: Project;
+  keyWord: KeyWord;
 };
+
+export type KeyWord = {
+  __typename?: 'KeyWord';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  projects: Array<Project>;
+};
+
+/** Entidad que relaciona projectos y usuarios */
+export type UserToProject = {
+  __typename?: 'UserToProject';
+  id: Scalars['ID'];
+  role: Scalars['String'];
+  user: User;
+  project: Project;
+};
+
+export type Todo = {
+  __typename?: 'Todo';
+  id: Scalars['ID'];
+  content: Scalars['String'];
+  state: Todo_State;
+  project: Project;
+};
+
+/** El estado de las todos, hay 3 posibles: Aun no empezada - En progreso - Finalizada */
+export enum Todo_State {
+  NotStarted = 'NOT_STARTED',
+  InProgress = 'IN_PROGRESS',
+  Completed = 'COMPLETED'
+}
+
+export type Project = {
+  __typename?: 'Project';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  team: User;
+  image?: Maybe<Scalars['String']>;
+  keywords: Array<KeyWord>;
+  users: Array<UserToProject>;
+  messages: Array<Message>;
+  todos: Array<Todo>;
+};
+
+/** Mensajes enviados entre los usuarios. */
+export type Message = {
+  __typename?: 'Message';
+  id: Scalars['ID'];
+  date: Scalars['DateTime'];
+  content: Scalars['String'];
+  sender: User;
+  project: Project;
+  receiver: User;
+};
+
 
 /** Registered users */
 export type User = {
@@ -61,6 +113,7 @@ export type User = {
   sentMessages: Array<Message>;
   receivedMessages: Array<Message>;
   teams: Array<UserToTeam>;
+  projects: Array<UserToProject>;
 };
 
 /** Solicitudes de amistad entre usuarios */
@@ -70,6 +123,35 @@ export type FriendRequest = {
   friendshipState: Scalars['Boolean'];
   sender: User;
   receiver: User;
+};
+
+export type MutationError = {
+  __typename?: 'MutationError';
+  path?: Maybe<Scalars['String']>;
+  msg?: Maybe<Scalars['String']>;
+};
+
+export type MessageResponse = IMutationResponse & {
+  __typename?: 'MessageResponse';
+  ok: Scalars['Boolean'];
+  msg?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<MutationError>>;
+  message?: Maybe<Message>;
+};
+
+export type TeamResponse = IMutationResponse & {
+  __typename?: 'TeamResponse';
+  ok: Scalars['Boolean'];
+  msg?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<MutationError>>;
+  team?: Maybe<Team>;
+};
+
+export type TeamPaginatedResponse = {
+  __typename?: 'TeamPaginatedResponse';
+  items: Array<Team>;
+  cursor?: Maybe<Scalars['String']>;
+  hasMore: Scalars['Boolean'];
 };
 
 /** Data on versions of this GIF with a fixed height of 200 pixels. Good for mobile use. */
@@ -119,35 +201,6 @@ export type Giphy = {
   create_datetime: Scalars['String'];
   /** An object containing data for various available formats and sizes of this GIF. */
   images: Image;
-};
-
-export type MutationError = {
-  __typename?: 'MutationError';
-  path?: Maybe<Scalars['String']>;
-  msg?: Maybe<Scalars['String']>;
-};
-
-export type MessageResponse = IMutationResponse & {
-  __typename?: 'MessageResponse';
-  ok: Scalars['Boolean'];
-  msg?: Maybe<Scalars['String']>;
-  errors?: Maybe<Array<MutationError>>;
-  message?: Maybe<Message>;
-};
-
-export type TeamResponse = IMutationResponse & {
-  __typename?: 'TeamResponse';
-  ok: Scalars['Boolean'];
-  msg?: Maybe<Scalars['String']>;
-  errors?: Maybe<Array<MutationError>>;
-  team?: Maybe<Team>;
-};
-
-export type TeamPaginatedResponse = {
-  __typename?: 'TeamPaginatedResponse';
-  items: Array<Team>;
-  cursor?: Maybe<Scalars['String']>;
-  hasMore: Scalars['Boolean'];
 };
 
 export type UserResponse = IMutationResponse & {
@@ -204,6 +257,14 @@ export type JoinTeamInput = {
   password?: Maybe<Scalars['String']>;
 };
 
+/** Obtener informacion paginada en base a cursor */
+export type TeamPaginatedInput = {
+  pageSize: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+  onlyPublic?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+};
+
 /** Informacion necesaria para crear nuevos usuarios */
 export type UserRegisterInput = {
   name: Scalars['String'];
@@ -227,23 +288,28 @@ export enum External_Auth_Apps {
 
 export type Query = {
   __typename?: 'Query';
+  myFriendRequests: Array<FriendRequest>;
+  myPendientFriendRequests: Array<FriendRequest>;
+  myChat: Array<Message>;
   /** Trending giphpys */
   trendingGifs?: Maybe<Array<Giphy>>;
   /** Search gifs */
   searchGifs?: Maybe<Array<Giphy>>;
-  myChat: Array<Message>;
   /** Get Teams! */
   teams: Array<Team>;
   /** Get paginated using cursor */
   teamsPaginated: TeamPaginatedResponse;
   /** Get One Team by team id param */
   team?: Maybe<Team>;
-  myFriendRequests: Array<FriendRequest>;
-  myPendientFriendRequests: Array<FriendRequest>;
   seed: Scalars['Boolean'];
   /** Get user by id. If you want to see your own info set id = -1 */
   user?: Maybe<User>;
   users: UserPaginatedResponse;
+};
+
+
+export type QueryMyChatArgs = {
+  with: Scalars['Int'];
 };
 
 
@@ -258,11 +324,6 @@ export type QuerySearchGifsArgs = {
 };
 
 
-export type QueryMyChatArgs = {
-  with: Scalars['Int'];
-};
-
-
 export type QueryTeamsArgs = {
   limit?: Maybe<Scalars['Float']>;
   offset?: Maybe<Scalars['Float']>;
@@ -270,7 +331,7 @@ export type QueryTeamsArgs = {
 
 
 export type QueryTeamsPaginatedArgs = {
-  data: PaginateInput;
+  data: TeamPaginatedInput;
 };
 
 
@@ -290,14 +351,25 @@ export type QueryUsersArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  sendFriendRequest: UserResponse;
+  answerFriendRequest: Scalars['Boolean'];
   enviarMensaje: MessageResponse;
   joinTeam: TeamResponse;
   createTeam: TeamResponse;
   register: UserResponse;
   login: LoginResponse;
   loginWithToken: LoginResponse;
-  sendFriendRequest: UserResponse;
-  answerFriendRequest: Scalars['Boolean'];
+};
+
+
+export type MutationSendFriendRequestArgs = {
+  to: Scalars['Float'];
+};
+
+
+export type MutationAnswerFriendRequestArgs = {
+  accept: Scalars['Boolean'];
+  requestId: Scalars['Float'];
 };
 
 
@@ -330,17 +402,6 @@ export type MutationLoginArgs = {
 
 export type MutationLoginWithTokenArgs = {
   data: SocialRegisterInput;
-};
-
-
-export type MutationSendFriendRequestArgs = {
-  to: Scalars['Float'];
-};
-
-
-export type MutationAnswerFriendRequestArgs = {
-  accept: Scalars['Boolean'];
-  requestId: Scalars['Float'];
 };
 
 export type Subscription = {
@@ -547,7 +608,7 @@ export type GetTeamsIdsQuery = (
 );
 
 export type GetPaginatedTeamsQueryVariables = Exact<{
-  data: PaginateInput;
+  data: TeamPaginatedInput;
 }>;
 
 
@@ -1131,7 +1192,7 @@ export type GetTeamsIdsQueryHookResult = ReturnType<typeof useGetTeamsIdsQuery>;
 export type GetTeamsIdsLazyQueryHookResult = ReturnType<typeof useGetTeamsIdsLazyQuery>;
 export type GetTeamsIdsQueryResult = Apollo.QueryResult<GetTeamsIdsQuery, GetTeamsIdsQueryVariables>;
 export const GetPaginatedTeamsDocument = gql`
-    query getPaginatedTeams($data: PaginateInput!) {
+    query getPaginatedTeams($data: TeamPaginatedInput!) {
   teamsPaginated(data: $data) {
     cursor
     hasMore

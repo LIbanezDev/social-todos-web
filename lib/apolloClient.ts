@@ -3,7 +3,7 @@ import { ApolloClient, ApolloLink, InMemoryCache, NormalizedCacheObject } from '
 import { createUploadLink } from 'apollo-upload-client';
 import { getConcatenatedSubscriptionsLink } from './subscriptionsLink';
 import { setContext } from '@apollo/client/link/context';
-import {mergePaginatedData} from "../utils/cacheUtils";
+import { mergePaginatedData } from '../utils/cacheUtils';
 
 const httpUploadLink: ApolloLink = createUploadLink({
 	uri:
@@ -40,15 +40,15 @@ export function createApolloClient() {
 					fields: {
 						teamsPaginated: {
 							keyArgs: [],
-							merge: mergePaginatedData
+							merge: mergePaginatedData,
 						},
 						users: {
 							keyArgs: false,
-							merge: mergePaginatedData
-						}
-					}
-				}
-			}
+							merge: mergePaginatedData,
+						},
+					},
+				},
+			},
 		}),
 	});
 }

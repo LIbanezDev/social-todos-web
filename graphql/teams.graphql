@@ -4,7 +4,7 @@ query getTeamsIds {
 	}
 }
 
-query getPaginatedTeams($data: PaginateInput!) {
+query getPaginatedTeams($data: TeamPaginatedInput!) {
 	teamsPaginated(data: $data) {
 		cursor
 		hasMore

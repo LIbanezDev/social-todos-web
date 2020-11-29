@@ -1,9 +1,9 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Avatar, CircularProgress, List, ListItem, ListItemIcon, ListItemText, Paper, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import {GetChatWithDocument, GetChatWithQuery, useGetAllUsersQuery} from '../__generated__/GraphQLTypes';
+import { GetChatWithDocument, GetChatWithQuery, useGetAllUsersQuery } from '../../__generated__/GraphQLTypes';
 import { ApolloQueryResult, useApolloClient } from '@apollo/client';
-import { useFetchUser } from '../lib/hooks/useFetchUser';
+import { useFetchUser } from '../../lib/hooks/useFetchUser';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	root: {
@@ -28,9 +28,9 @@ const Users = ({
 	const { data: users, loading: loadingUsers } = useGetAllUsersQuery({
 		variables: {
 			data: {
-				pageSize: 20
-			}
-		}
+				pageSize: 20,
+			},
+		},
 	});
 
 	const setChat = async (userId: number) => {

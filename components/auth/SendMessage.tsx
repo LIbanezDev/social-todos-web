@@ -1,5 +1,5 @@
 import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
-import { GetChatWithDocument, GetChatWithQuery, useSendMessageMutation } from '../__generated__/GraphQLTypes';
+import { GetChatWithDocument, GetChatWithQuery, useSendMessageMutation } from '../../__generated__/GraphQLTypes';
 import { Button, CircularProgress, Grid, TextField, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { Send, InsertEmoticon } from '@material-ui/icons/';

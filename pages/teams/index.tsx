@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import { useGetPaginatedTeamsQuery } from '../../__generated__/GraphQLTypes';
 import CreateTeamForm from '../../components/team/CreateTeamForm';
@@ -18,27 +18,31 @@ import {
 	TextField,
 	Typography,
 } from '@material-ui/core';
-import { ExpandMore } from '@material-ui/icons';
+import { ExpandMore, Search } from '@material-ui/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Skeleton } from '@material-ui/lab';
+import SkeletonLoaderCard from '../../components/shared/SkeletonLoaderCard';
+import { useFetchUser } from '../../lib/hooks/useFetchUser';
 
 export interface TeamFilters {
 	name: string;
 	publicTeam: boolean;
+	loading: boolean;
 }
 
 const Teams = () => {
-	const { data, loading, fetchMore } = useGetPaginatedTeamsQuery({
+	const [openCreateTeamDialog, setOpenCreateTeamDialog] = useState<boolean>(false);
+	const [filters, setFilters] = useState<TeamFilters>({
+		name: '',
+		publicTeam: false,
+		loading: false,
+	});
+	const { user, loading: loadingUser } = useFetchUser({ required: true });
+	const { data, loading, fetchMore, refetch } = useGetPaginatedTeamsQuery({
 		variables: {
 			data: {
 				pageSize: 9,
 			},
 		},
-	});
-	const [openCreateTeamDialog, setOpenCreateTeamDialog] = React.useState<boolean>(false);
-	const [filters, setFilters] = React.useState<TeamFilters>({
-		name: '',
-		publicTeam: null,
 	});
 
 	const fetchMoreTeams = async () => {
@@ -59,10 +63,23 @@ const Teams = () => {
 		}));
 	};
 
+	const filterTeams = async () => {
+		setFilters(prev => ({ ...prev, loading: true }));
+		await refetch({
+			data: {
+				pageSize: 3,
+				name: filters.name === '' ? null : filters.name,
+				onlyPublic: filters.publicTeam,
+			},
+		});
+		setFilters(prev => ({ ...prev, loading: false }));
+	};
+
 	const handleInputChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		setFilters({
 			name: evt.target.value,
 			publicTeam: filters.publicTeam,
+			loading: false,
 		});
 	};
 
@@ -87,34 +104,38 @@ const Teams = () => {
 				<Grid item xs={12} sm={4}>
 					<Grid container>
 						<Accordion elevation={3}>
-							<AccordionSummary
-								expandIcon={<ExpandMore />}
-								aria-controls='panel1a-content'
-								id='panel1a-header'
-							>
+							<AccordionSummary expandIcon={<ExpandMore />} aria-controls='panel1a-content' id='panel1a-header'>
 								<Typography>Filtros</Typography>
 							</AccordionSummary>
 							<AccordionDetails>
-								<Grid item xs={12} sm={7} style={{ marginRight: 10 }}>
-									<TextField
-										id='search-by-name'
-										value={filters.name}
-										onChange={handleInputChange}
-										label='Buscar por nombre'
-										variant='outlined'
-									/>
-								</Grid>
-								<Grid item xs={12} sm={5}>
-									<FormControlLabel
-										control={
-											<Switch
-												size='small'
-												checked={filters.publicTeam}
-												onChange={toggleChecked}
-											/>
-										}
-										label={'Solo publicos'}
-									/>
+								<Grid container spacing={2}>
+									<Grid item xs={12} sm={7}>
+										<TextField
+											id='search-by-name'
+											value={filters.name}
+											onChange={handleInputChange}
+											label='Buscar por nombre'
+											variant='outlined'
+										/>
+									</Grid>
+									<Grid item xs={12} sm={5}>
+										<FormControlLabel
+											control={<Switch size='small' checked={filters.publicTeam} onChange={toggleChecked} />}
+											label={'Solo publicos'}
+										/>
+									</Grid>
+									<Grid item xs={12} sm={6}>
+										<Button
+											variant='contained'
+											color='primary'
+											type='submit'
+											disabled={filters.loading}
+											endIcon={filters.loading ? <CircularProgress size={24} color='inherit' /> : <Search />}
+											onClick={filterTeams}
+										>
+											Buscar
+										</Button>
+									</Grid>
 								</Grid>
 							</AccordionDetails>
 						</Accordion>
@@ -127,26 +148,17 @@ const Teams = () => {
 				</Grid>
 			</Grid>
 			<Grid container>
-				{loading ? (
+				{loading || loadingUser ? (
 					<CircularProgress />
 				) : (
 					<InfiniteScroll
 						dataLength={data.teamsPaginated.items.length}
 						next={fetchMoreTeams}
 						hasMore={data.teamsPaginated.hasMore}
-						loader={
-							<Grid container spacing={2}>
-								{[...Array(6)].map(() => (
-									<Grid item xs={12} sm={4}>
-										<Skeleton variant='rect' width={480} height={20} />
-										<Skeleton variant='rect' width={480} height={160} />
-									</Grid>
-								))}
-							</Grid>
-						}
+						loader={<SkeletonLoaderCard />}
 					>
-						<Grid container spacing={2}>
-							<TeamsList filters={filters} teamsResult={data.teamsPaginated.items} />
+						<Grid container>
+							<TeamsList user={user} filters={filters} teamsResult={data.teamsPaginated.items} />
 						</Grid>
 					</InfiniteScroll>
 				)}

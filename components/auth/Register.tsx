@@ -81,9 +81,7 @@ const Register = () => {
 											variant='inline'
 											format='dd/MM/yyyy'
 											value={props.values.bornDate}
-											onChange={(date: Date, value: string) =>
-												props.setFieldValue('bornDate', value)
-											}
+											onChange={(date: Date, value: string) => props.setFieldValue('bornDate', value)}
 											KeyboardButtonProps={{
 												'aria-label': 'change date',
 											}}

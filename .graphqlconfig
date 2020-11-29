@@ -1,5 +1,5 @@
 {
-  "name": "Untitled GraphQL Schema",
+  "name": "Social Todos Graph",
   "schemaPath": "schema.graphql",
   "extensions": {
     "endpoints": {

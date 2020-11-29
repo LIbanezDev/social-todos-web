@@ -56,7 +56,7 @@ export function useFetchUser({ required }: FetchUserProps) {
 		setLoading(true);
 		let isMounted = true;
 
-		fetchUser(apolloClient).then(user => {
+		fetchUser(apolloClient).then(async user => {
 			// Only set the user if the component is still mounted
 			if (isMounted) {
 				// When the user is not logged in but login is required
@@ -64,11 +64,13 @@ export function useFetchUser({ required }: FetchUserProps) {
 					if (localStorage.getItem('token')) {
 						localStorage.removeItem('token');
 					}
-					replace('/auth');
+					await replace('/auth');
+					setLoading(false);
 					return;
+				} else {
+					setUser(user);
+					setLoading(false);
 				}
-				setUser(user);
-				setLoading(false);
 			}
 		});
 

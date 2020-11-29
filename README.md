@@ -7,10 +7,10 @@ La aplicación está construida completamente `type-safety`, ya que utiliza type
 
 ## Tecnologías utilizadas en la web
 
--   Typescript
--   React
--   NextJS `Client Side Rendering & Incremental Static Re-generation`
--   GraphQL & GraphQL code generator
+- Typescript
+- React
+- NextJS `Client Side Rendering & Incremental Static Re-generation`
+- GraphQL & GraphQL code generator
 
 ## Uso
 

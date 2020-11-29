@@ -1,5 +1,5 @@
 import React from 'react';
-import { GetTrendingGifsQuery } from '../__generated__/GraphQLTypes';
+import { GetTrendingGifsQuery } from '../../__generated__/GraphQLTypes';
 import { Typography } from '@material-ui/core';
 import Image from 'next/image';
 

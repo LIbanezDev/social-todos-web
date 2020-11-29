@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../components/layout/Layout';
 import { useFetchUser } from '../lib/hooks/useFetchUser';
 import { useRouter } from 'next/router';
@@ -8,11 +8,18 @@ import Login from '../components/auth/Login';
 
 const Auth = () => {
 	const { replace } = useRouter();
+	const [show, setShow] = useState(false);
 	const { user, loading } = useFetchUser({ required: false });
 
-	if (!loading && user) {
-		replace('/');
-	}
+	useEffect(() => {
+		if (!loading) {
+			if (user) {
+				replace('/');
+			} else {
+				setShow(true);
+			}
+		}
+	}, [loading]);
 
 	return (
 		<Layout
@@ -21,7 +28,7 @@ const Auth = () => {
 			description='Pagina de autenticacion de usuarios para la aplicacion Social Todos,
 					contiene login con github y google'
 		>
-			{loading ? (
+			{!show ? (
 				<CircularProgress />
 			) : (
 				<>

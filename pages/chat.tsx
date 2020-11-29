@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { GetChatWithQuery } from '../__generated__/GraphQLTypes';
 import Layout from '../components/layout/Layout';
-import SendMessage from '../components/SendMessage';
-import Messages from '../components/Messages';
+import SendMessage from '../components/auth/SendMessage';
+import Messages from '../components/auth/Messages';
 import { Grid, Typography } from '@material-ui/core';
-import Users from '../components/Users';
+import Users from '../components/user/Users';
 
 const Chat = () => {
 	const [messages, setMessages] = useState<GetChatWithQuery>(null);

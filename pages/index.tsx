@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../components/layout/Layout';
-import Gifs from '../components/Gifs';
+import Gifs from '../components/shared/Gifs';
 import { GetTrendingGifsDocument, useGetTrendingGifsQuery } from '../__generated__/GraphQLTypes';
 import { GetStaticProps } from 'next';
 import { initializeApollo } from '../lib/apolloClient';

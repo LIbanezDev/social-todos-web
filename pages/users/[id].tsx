@@ -103,12 +103,7 @@ const Profile = () => {
 							<TabPanel value={value} index={0}>
 								<Grid container className='animate__animated animate__fadeIn'>
 									<Grid item xs={12} sm={4}>
-										<Image
-											src={getUserImageURL(data?.user.image)}
-											width={200}
-											height={200}
-											alt={data?.user.name}
-										/>
+										<Image src={getUserImageURL(data?.user.image)} width={200} height={200} alt={data?.user.name} />
 									</Grid>
 									<Grid item xs={12} sm={4}>
 										<Typography variant='body1'>

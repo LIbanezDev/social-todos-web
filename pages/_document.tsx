@@ -12,10 +12,7 @@ export default class MyDocument extends Document {
 					<meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
 					<meta httpEquiv='Content-Type' content='text/html; charset=ISO-8859-1' />
 					<meta charSet='utf-8' />
-					<link
-						rel='stylesheet'
-						href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css'
-					/>
+					<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css' />
 					<link rel='icon' type='image/png' href={'/social_todos.svg'} />
 				</Head>
 				<body>

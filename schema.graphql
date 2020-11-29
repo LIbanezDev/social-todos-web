@@ -68,6 +68,12 @@ type Image {
     fixed_width: FixedImage!
 }
 
+type KeyWord {
+    id: ID!
+    name: String!
+    projects: [Project!]!
+}
+
 type LoginResponse implements IMutationResponse {
     errors: [MutationError!]
     msg: String
@@ -81,6 +87,7 @@ type Message {
     content: String!
     date: DateTime!
     id: ID!
+    project: Project!
     receiver: User!
     sender: User!
 }
@@ -108,6 +115,23 @@ type MutationError {
     path: String
 }
 
+type Project {
+    description: String!
+    id: ID!
+    image: String
+    keywords: [KeyWord!]!
+    messages: [Message!]!
+    name: String!
+    team: User!
+    todos: [Todo!]!
+    users: [UserToProject!]!
+}
+
+type ProjectToKeyWord {
+    keyWord: KeyWord!
+    project: Project!
+}
+
 type Query {
     myChat(with: Int!): [Message!]!
     myFriendRequests: [FriendRequest!]!
@@ -120,7 +144,7 @@ type Query {
     "Get Teams!"
     teams(limit: Float = 6.0, offset: Float = 0.0): [Team!]!
     "Get paginated using cursor"
-    teamsPaginated(data: PaginateInput!): TeamPaginatedResponse!
+    teamsPaginated(data: TeamPaginatedInput!): TeamPaginatedResponse!
     "Trending giphpys"
     trendingGifs(limit: Float = 25.0, offset: Float = 0.0): [Giphy!]
     "Get user by id. If you want to see your own info set id = -1"
@@ -138,6 +162,7 @@ type Team {
     image: String
     isPublic: Boolean!
     name: String!
+    projects: [Project!]!
     users: [UserToTeam!]!
 }
 
@@ -154,6 +179,13 @@ type TeamResponse implements IMutationResponse {
     team: Team
 }
 
+type Todo {
+    content: String!
+    id: ID!
+    project: Project!
+    state: TODO_STATE!
+}
+
 "Registered users"
 type User {
     age: Float!
@@ -165,6 +197,7 @@ type User {
     id: ID!
     image: String
     name: String!
+    projects: [UserToProject!]!
     receivedMessages: [Message!]!
     sentMessages: [Message!]!
     teams: [UserToTeam!]!
@@ -183,6 +216,14 @@ type UserResponse implements IMutationResponse {
     user: User
 }
 
+"Entidad que relaciona projectos y usuarios"
+type UserToProject {
+    id: ID!
+    project: Project!
+    role: String!
+    user: User!
+}
+
 type UserToTeam {
     team: Team!
     user: User!
@@ -193,6 +234,13 @@ type UserToTeam {
 enum EXTERNAL_AUTH_APPS {
     GitHub
     Google
+}
+
+"El estado de las todos, hay 3 posibles: Aun no empezada - En progreso - Finalizada"
+enum TODO_STATE {
+    COMPLETED
+    IN_PROGRESS
+    NOT_STARTED
 }
 
 input CreateTeamInput {
@@ -222,6 +270,14 @@ input PaginateInput {
 input SocialRegisterInput {
     token: String!
     type: EXTERNAL_AUTH_APPS!
+}
+
+"Obtener informacion paginada en base a cursor"
+input TeamPaginatedInput {
+    cursor: String
+    name: String
+    onlyPublic: Boolean
+    pageSize: Int!
 }
 
 "Informacion necesaria para crear nuevos usuarios"

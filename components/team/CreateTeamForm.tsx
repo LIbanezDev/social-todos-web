@@ -99,9 +99,7 @@ const CreateTeamForm = () => {
 					<Box marginBottom={2}>
 						<Upload onChange={onFileChange} />
 					</Box>
-					{selectedFile.preview && (
-						<img src={selectedFile.preview} style={{ height: '200px' }} alt='Team Preview' />
-					)}
+					{selectedFile.preview && <img src={selectedFile.preview} style={{ height: '200px' }} alt='Team Preview' />}
 					<Box marginBottom={2}>
 						<Button variant='contained' color='primary' type='submit'>
 							Create Team
@@ -112,6 +110,5 @@ const CreateTeamForm = () => {
 		</Formik>
 	);
 };
-
 
 export default CreateTeamForm;

@@ -1,16 +1,16 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { GetAllUsersQuery, useSendFriendRequestMutation } from '../../__generated__/GraphQLTypes';
-import { getUserImageURL } from '../../utils/userImage';
-import { Add, HourglassEmpty, Launch } from '@material-ui/icons';
+import {GetPaginatedTeamsQuery, useSendFriendRequestMutation,} from '../../__generated__/GraphQLTypes';
+import {getUserImageURL} from '../../utils/userImage';
+import {Add, HourglassEmpty, Launch} from '@material-ui/icons';
 import Link from 'next/link';
-import { useSnackbar } from 'notistack';
+import {useSnackbar} from 'notistack';
 
 const useStyles = makeStyles({
 	root: {
@@ -21,13 +21,13 @@ const useStyles = makeStyles({
 	},
 });
 
-const UserCard = ({
+const TeamCard = ({
 	id,
 	name,
 	image,
 	description,
 	alreadySendFR,
-}: GetAllUsersQuery['users']['items'][0] & { alreadySendFR: boolean }) => {
+}: GetPaginatedTeamsQuery['teamsPaginated']['items'][0] & { alreadySendFR: boolean }) => {
 	const classes = useStyles();
 	const [sendFR] = useSendFriendRequestMutation();
 	const { enqueueSnackbar } = useSnackbar();
@@ -84,4 +84,4 @@ const UserCard = ({
 	);
 };
 
-export default UserCard;
+export default TeamCard;

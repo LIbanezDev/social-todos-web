@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import { useGetTeamByIdQuery } from '../../__generated__/GraphQLTypes';
 import { useRouter } from 'next/router';
@@ -33,6 +33,7 @@ const TeamDetails = () => {
 	const router = useRouter();
 	const classes = useStyles();
 	const { enqueueSnackbar } = useSnackbar();
+	const [show, setShow] = useState(false);
 	const { user, loading: loadingUser } = useFetchUser({ required: true });
 	const { data, loading } = useGetTeamByIdQuery({
 		variables: {
@@ -40,25 +41,28 @@ const TeamDetails = () => {
 		},
 	});
 
-	if (!loadingUser && !loading && !data.team.isPublic) {
-		if (data.team.users.findIndex(u => u.user.id === user.user.id) === -1) {
-			router.replace('/teams').then(() =>
-				enqueueSnackbar('Es un equipo privado!', {
-					variant: 'warning',
-				})
-			);
+	useEffect(() => {
+		// Checking if user belongs to private team
+		if (!loadingUser && !loading && !data.team.isPublic) {
+			if (data.team.users.findIndex(u => u.user.id === user.user.id) === -1) {
+				router.replace('/teams').then(() =>
+					enqueueSnackbar('Es un equipo privado!', {
+						variant: 'warning',
+					})
+				);
+			} else {
+				setShow(true);
+			}
 		}
-	}
+	}, [loadingUser, loading]);
 
 	return (
 		<Layout
 			title={data?.team.name || 'Team page'}
-			description={
-				'Detalles de equipo ' + data?.team.name + ', nombre, usuarios normales y administradores, y mas.'
-			}
+			description={'Detalles de equipo ' + data?.team.name + ', nombre, usuarios normales y administradores, y mas.'}
 			authRequired={true}
 		>
-			{loading || loadingUser ? (
+			{!show ? (
 				<CircularProgress />
 			) : (
 				<>
@@ -82,10 +86,7 @@ const TeamDetails = () => {
 										<ListItemAvatar>
 											{user.userIsAdmin ? (
 												<Badge badgeContent={'MOD'} color='primary'>
-													<Avatar
-														alt={user.user.name}
-														src={getUserImageURL(user.user.image)}
-													/>
+													<Avatar alt={user.user.name} src={getUserImageURL(user.user.image)} />
 												</Badge>
 											) : (
 												<Avatar alt={user.user.name} src={getUserImageURL(user.user.image)} />
