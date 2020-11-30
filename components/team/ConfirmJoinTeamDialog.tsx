@@ -67,40 +67,43 @@ const ConfirmJoinTeamDialog = ({ open, handleClose, teamSelected, publicTeam }: 
 			aria-labelledby='alert-dialog-title'
 			aria-describedby='alert-dialog-description'
 		>
-			<DialogTitle id='alert-dialog-title'>Unirse a {teamSelected.name}</DialogTitle>
-			<DialogContent>
-				<DialogContentText id='alert-dialog-description'>
-					{publicTeam ? (
-						<Typography variant='body2'>Unirse al equipo publico {teamSelected.name}</Typography>
-					) : (
-						<>
-							<Typography variant='body1' style={{ marginBottom: 18 }}>
-								{teamSelected.name} es un equipo privado, debes ingresar contraseña.
-							</Typography>
-							<TextField
-								autoComplete='off'
-								id='outlined-basic'
-								type='password'
-								value={password}
-								onChange={handleInputChange}
-								label='Ingrese contraseña'
-								variant='outlined'
-							/>
-						</>
-					)}
-				</DialogContentText>
-			</DialogContent>
-			<DialogActions>
-				<Button onClick={handleClose}>Cancelar</Button>
-				<Button
-					onClick={handleSendTeamRequest}
-					color='primary'
-					autoFocus
-					startIcon={isSendingRequest ? <CircularProgress size={24} /> : null}
-				>
-					Unirse
-				</Button>
-			</DialogActions>
+			<form action="#" autoComplete='off'>
+				<DialogTitle id='alert-dialog-title'>Unirse a {teamSelected.name}</DialogTitle>
+				<DialogContent>
+					<DialogContentText id='alert-dialog-description'>
+						{publicTeam ? (
+							<Typography variant='body2'>Unirse al equipo publico {teamSelected.name}</Typography>
+						) : (
+							<>
+								<Typography variant='body1' style={{ marginBottom: 18 }}>
+									{teamSelected.name} es un equipo privado, debes ingresar contraseña.
+								</Typography>
+								<TextField
+									autoComplete='off'
+									id='outlined-basic'
+									type='password'
+									value={password}
+									onChange={handleInputChange}
+									label='Ingrese contraseña'
+									variant='outlined'
+								/>
+							</>
+						)}
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose}>Cancelar</Button>
+					<Button
+						onClick={handleSendTeamRequest}
+						color='primary'
+						autoFocus
+						type='submit'
+						startIcon={isSendingRequest ? <CircularProgress size={24} /> : null}
+					>
+						Unirse
+					</Button>
+				</DialogActions>
+			</form>
 		</Dialog>
 	);
 };

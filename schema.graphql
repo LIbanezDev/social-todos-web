@@ -26,7 +26,7 @@ type FixedImage {
     width: String!
 }
 
-"Solicitudes de amistad entre usuarios"
+"Amistad entre usuarios"
 type FriendRequest {
     friendshipState: Boolean!
     id: ID!
@@ -143,7 +143,7 @@ type Query {
     team(id: Float!): Team
     "Get Teams!"
     teams(limit: Float = 6.0, offset: Float = 0.0): [Team!]!
-    "Get paginated using cursor"
+    "Get paginated teams"
     teamsPaginated(data: TeamPaginatedInput!): TeamPaginatedResponse!
     "Trending giphpys"
     trendingGifs(limit: Float = 25.0, offset: Float = 0.0): [Giphy!]

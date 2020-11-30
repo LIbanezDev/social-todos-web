@@ -116,7 +116,7 @@ export type User = {
   projects: Array<UserToProject>;
 };
 
-/** Solicitudes de amistad entre usuarios */
+/** Amistad entre usuarios */
 export type FriendRequest = {
   __typename?: 'FriendRequest';
   id: Scalars['ID'];
@@ -297,7 +297,7 @@ export type Query = {
   searchGifs?: Maybe<Array<Giphy>>;
   /** Get Teams! */
   teams: Array<Team>;
-  /** Get paginated using cursor */
+  /** Get paginated teams */
   teamsPaginated: TeamPaginatedResponse;
   /** Get One Team by team id param */
   team?: Maybe<Team>;

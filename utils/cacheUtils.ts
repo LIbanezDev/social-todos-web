@@ -68,7 +68,6 @@ export const updateCache = (
 export const mergePaginatedData = (existing, incoming) => {
 	// Slicing is necessary because the existing data is
 	// immutable, and frozen in development.
-	console.log({ existing, incoming });
 	const merged = existing ? existing.items.slice(0) : [];
 	for (let i = 0; i < incoming.items.length; ++i) {
 		merged[existing ? existing.items.length + i : i] = incoming.items[i];
