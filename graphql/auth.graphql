@@ -1,47 +1,39 @@
 fragment MutationResponse on IMutationResponse {
-	ok
-	msg
-	errors {
-		msg
-		path
-	}
+    ok
+    msg
+    errors {
+        msg
+        path
+    }
 }
 
 mutation register($data: UserRegisterInput!) {
-	register(data: $data) {
-		...MutationResponse
-		user {
-			id
-			age
-			email
-		}
-	}
+    register(data: $data) {
+        ...MutationResponse
+        user {
+            id
+            age
+            email
+        }
+    }
 }
 
 mutation login($email: String!, $pass: String!) {
-	login(email: $email, password: $pass) {
-		...MutationResponse
-		token
-		user {
-			id
-			name
-		}
-	}
+    login(email: $email, password: $pass) {
+        ...MutationResponse
+        token
+        user {
+            id
+            name
+        }
+    }
 }
 
-query getFriendRequests {
-	myFriendRequests {
-		id
-		sender {
-			name
-			image
-		}
-	}
-}
+
 
 mutation socialLogin($token: String!, $type: EXTERNAL_AUTH_APPS!) {
-	loginWithToken(data: { token: $token, type: $type }) {
-		...MutationResponse
-		token
-	}
+    loginWithToken(data: { token: $token, type: $type }) {
+        ...MutationResponse
+        token
+    }
 }

@@ -1,9 +1,9 @@
 import React from 'react';
-import {useGetAllUsersQuery, useGetMyPendientFriendRequestsQuery} from '../../__generated__/GraphQLTypes';
-import {CircularProgress, Grid} from '@material-ui/core';
+import { useGetAllUsersQuery, useGetMySentFriendRequestsQuery } from '../../__generated__/GraphQLTypes';
+import { CircularProgress, Grid } from '@material-ui/core';
 import Layout from '../../components/layout/Layout';
 import UserCard from '../../components/user/UserCard';
-import {useFetchUser} from '../../lib/hooks/useFetchUser';
+import { useFetchUser } from '../../lib/hooks/useFetchUser';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import SkeletonLoaderCard from '../../components/shared/SkeletonLoaderCard';
 
@@ -16,7 +16,7 @@ const Teams = () => {
 		},
 	});
 	const userLoading = useFetchUser({ required: true });
-	const { data: result, loading: loadingFR } = useGetMyPendientFriendRequestsQuery();
+	const { data: result, loading: loadingFR } = useGetMySentFriendRequestsQuery();
 
 	const fetchMoreUsers = async () => {
 		await fetchMore({
@@ -28,7 +28,7 @@ const Teams = () => {
 			},
 		});
 	};
-
+	console.log(result);
 	return (
 		<Layout
 			description={'Lista de usuarios registrados en Social Todos'}
@@ -52,9 +52,7 @@ const Teams = () => {
 										<Grid item xs={12} sm={3} key={user.id} style={{ marginBottom: 10 }}>
 											<UserCard
 												{...user}
-												alreadySendFR={
-													result.myPendientFriendRequests.findIndex(fr => fr.receiver.id == user.id) !== -1
-												}
+												alreadySendFR={result.myFriendRequests.findIndex(fr => fr.receiver.id == user.id) !== -1}
 											/>
 										</Grid>
 									)

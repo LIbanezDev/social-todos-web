@@ -134,8 +134,8 @@ type ProjectToKeyWord {
 
 type Query {
     myChat(with: Int!): [Message!]!
-    myFriendRequests: [FriendRequest!]!
-    myPendientFriendRequests: [FriendRequest!]!
+    myFriendRequests(type: FriendRequestType!): [FriendRequest!]!
+    myFriends: [FriendRequest!]!
     "Search gifs"
     searchGifs(query: String!): [Giphy!]
     seed: Boolean!
@@ -236,6 +236,12 @@ enum EXTERNAL_AUTH_APPS {
     Google
 }
 
+"Tipo de solicitud para consultar, enviadas o recividas."
+enum FriendRequestType {
+    RECEIVED
+    SENT
+}
+
 "El estado de las todos, hay 3 posibles: Aun no empezada - En progreso - Finalizada"
 enum TODO_STATE {
     COMPLETED
@@ -283,6 +289,7 @@ input TeamPaginatedInput {
 "Informacion necesaria para crear nuevos usuarios"
 input UserRegisterInput {
     bornDate: DateTime!
+    description: String = "true"
     email: String!
     image: Upload
     name: String!

@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import { Add, Launch } from '@material-ui/icons';
+import { Add, Launch, Lock } from '@material-ui/icons';
 import { GetPaginatedTeamsQuery, GetUserByIdQuery } from '../../__generated__/GraphQLTypes';
 import { Button, Grid } from '@material-ui/core';
 import Link from 'next/link';
@@ -100,7 +100,19 @@ const TeamsList = ({ teamsResult, user }: TeamsListProps) => {
 								{user.user.teams.findIndex(t => t.team.id === team.id) !== -1 ? 'Ya eres parte del equipo' : 'Unirse'}
 							</Button>
 							<Link href={`/teams/${team.id}`}>
-								<Button size='small' color='inherit' variant='contained' endIcon={<Launch />}>
+								<Button
+									size='small'
+									color='inherit'
+									variant='contained'
+									endIcon={
+										!team.isPublic && !(user.user.teams.findIndex(t => t.team.id === team.id) !== -1) ? (
+											<Lock />
+										) : (
+											<Launch />
+										)
+									}
+									disabled={!team.isPublic && !(user.user.teams.findIndex(t => t.team.id === team.id) !== -1)}
+								>
 									Abrir
 								</Button>
 							</Link>

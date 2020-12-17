@@ -1,72 +1,82 @@
 query getAllUsers($data: PaginateInput!) {
-	users(data: $data) {
-		cursor
-		hasMore
-		items {
-			id
-			name
-			image
-			description
-			github
-			google
-		}
-	}
+    users(data: $data) {
+        cursor
+        hasMore
+        items {
+            id
+            name
+            image
+            description
+            github
+            google
+        }
+    }
 }
 
-query getMyPendientFriendRequests {
-	myPendientFriendRequests {
-		receiver {
-			id
-		}
-	}
+query getMySentFriendRequests {
+    myFriendRequests(type: SENT) {
+        receiver {
+            id
+        }
+    }
 }
 
 query getMyReceivedFriendRequests {
-	myFriendRequests {
-		id
-		sender {
-			id
-			name
-			image
-		}
-	}
+    myFriendRequests(type: RECEIVED) {
+        sender {
+            id
+            name
+            image
+        }
+    }
+}
+
+query getMyFriends {
+    myFriends {
+        id
+        sender {
+            id
+            name
+            image
+        }
+    }
 }
 
 mutation sendFriendRequest($to: Float!) {
-	sendFriendRequest(to: $to) {
-		ok
-		msg
-		errors {
-			msg
-			path
-		}
-	}
+    sendFriendRequest(to: $to) {
+        ok
+        msg
+        errors {
+            msg
+            path
+        }
+    }
 }
 
 query getUserById($id: Float!) {
-	user(id: $id) {
-		id
-		name
-		email
-		age
-		description
-		github
-		image
-		google
-		teams {
-			userIsAdmin
-			team {
-				id
-				name
-			}
-		}
-		friends {
-			id
-			name
-			email
-			image
-			github
-			google
-		}
-	}
+    user(id: $id) {
+        id
+        name
+        email
+        age
+        description
+        github
+        image
+        google
+        teams {
+            userIsAdmin
+            team {
+                id
+                name
+            }
+        }
+        friends {
+            id
+            name
+            email
+            image
+            github
+            google
+        }
+    }
 }

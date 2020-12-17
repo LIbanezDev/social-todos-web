@@ -151,12 +151,10 @@ const Profile = () => {
 														<Avatar src={getUserImageURL(fr.sender.image)} />
 														<Typography variant='body1'>{fr.sender.name}</Typography>
 														<Button variant='contained' color='primary'>
-															{' '}
-															Aceptar{' '}
+															Aceptar
 														</Button>
 														<Button variant='contained' color='secondary'>
-															{' '}
-															Rechazar{' '}
+															Rechazar
 														</Button>
 													</>
 												))}
